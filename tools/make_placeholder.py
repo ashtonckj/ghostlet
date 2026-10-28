@@ -1,0 +1,29 @@
+"""Regenerate the placeholder art in ghostlet/assets/ from the ASCII art in ghostlet/assets.py.
+
+Run from the project root:  python tools/make_placeholder.py
+"""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from PySide6.QtCore import Qt  # noqa: E402
+from PySide6.QtGui import QGuiApplication, QImage  # noqa: E402
+
+from ghostlet.assets import ASSET_DIR, GHOST, GHOST_ASLEEP, art_to_image  # noqa: E402
+
+app = QGuiApplication(sys.argv)
+ASSET_DIR.mkdir(exist_ok=True)
+ghost = art_to_image(GHOST)
+ghost.save(str(ASSET_DIR / "ghost.png"))
+art_to_image(GHOST_ASLEEP).save(str(ASSET_DIR / "sleeping_0.png"))
+# Exe/tray icon, upscaled with hard pixel edges.
+ghost.scaled(256, 256, Qt.KeepAspectRatio, Qt.FastTransformation).save(str(ASSET_DIR / "ghost.ico"))
+print("Wrote placeholder art to", ASSET_DIR)
+
+# README images: browsers blur small PNGs when enlarging, so pre-scale with hard edges.
+DOCS_DIR = ASSET_DIR.parent.parent / "docs"
+DOCS_DIR.mkdir(exist_ok=True)
+for name in ("ghost.png", "sleeping_0.png"):
+    QImage(str(ASSET_DIR / name)).scaled(160, 160, Qt.KeepAspectRatio, Qt.FastTransformation).save(str(DOCS_DIR / name))
+print("Wrote README images to", DOCS_DIR)
