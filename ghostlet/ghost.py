@@ -5,11 +5,15 @@ Coordinates are screen pixels of the ghost's centre. States:
   floating - drifts gently around its home spot
   sleeping - dozes after floating for a while
   fleeing  - user came back: dart away from the cursor and fade out
+
+Props (pumpkins, graves) rest along the bottom of the screen while ghosts are out.
+When the ghosts flee, each prop is snatched by a ghost and carried away.
 """
 import math
 
 IDLE, FLOATING, SLEEPING, FLEEING = "idle", "floating", "sleeping", "fleeing"
 STATES = (IDLE, FLOATING, SLEEPING, FLEEING)
+PROP_KINDS = ("pumpkin", "grave")
 
 FADE_IN = 1.0  # seconds
 IDLE_TIME = 3.0  # seconds hovering before drifting
@@ -18,6 +22,7 @@ FLEE_TIME = 0.8  # seconds to run off and vanish
 FLEE_SPEED = 300.0  # pixels per second at the start of fleeing
 ANIM_FPS = 4  # frame rate for multi-frame artwork
 FOLLOW = 3.0  # how fast the ghost eases toward its target (per second)
+GRAB_TIME = 0.3  # seconds for a fleeing ghost to snatch its prop
 
 
 class Ghost:
@@ -90,3 +95,40 @@ class Ghost:
         k = min(1.0, dt * FOLLOW)  # ease toward target so state changes never jump
         self.x += (tx - self.x) * k
         self.y += (ty - self.y) * k
+
+
+class Prop:
+    def __init__(self, kind, x, y):
+        self.kind = kind
+        self.rest_x, self.rest_y = x, y
+        self.x, self.y = x, y
+        self.alpha = 0.0
+        self.carrier = None
+        self.hang = 0.0  # pixels below the carrier's centre
+        self.carry_time = 0.0
+
+    def grab(self, ghost, hang):
+        if self.carrier is None:
+            self.carrier, self.hang = ghost, hang
+
+    @property
+    def gone(self):
+        return self.carrier is not None and self.carrier.gone
+
+    def update(self, dt):
+        """Call after the carrier ghost has been updated this frame."""
+        g = self.carrier
+        if g is None:
+            self.alpha = min(1.0, self.alpha + dt / FADE_IN)
+            return
+        self.carry_time += dt
+        k = min(1.0, self.carry_time / GRAB_TIME)  # zip up to the ghost, then hang on
+        self.x = self.rest_x + (g.x - self.rest_x) * k
+        self.y = self.rest_y + (g.y + self.hang - self.rest_y) * k
+        self.alpha = min(self.alpha, g.alpha)
+
+
+def prop_spots(left, right, count, rng):
+    """Spread count x positions evenly across [left, right], with a little jitter."""
+    slot = (right - left) / count
+    return [left + slot * (i + rng.uniform(0.25, 0.75)) for i in range(count)]

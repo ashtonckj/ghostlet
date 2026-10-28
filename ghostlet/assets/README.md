@@ -8,6 +8,7 @@ All artwork lives in this folder. The code never hard-codes art, so you can swap
 |------|----------|
 | `ghost.png` | Base image. Used for every state that has no frames of its own. |
 | `<state>_<n>.png` | Animation frames for one state. `n` starts at 0. |
+| `pumpkin.png`, `grave.png` | Props that sit along the bottom of the screen and get carried off. Draw them facing up; they are not mirrored. 16×16 by default. |
 | `ghost.ico` | Tray icon is taken from the art; this file is only the `.exe` icon. |
 
 States: `idle`, `floating`, `sleeping`, `fleeing`.

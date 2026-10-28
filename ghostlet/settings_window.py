@@ -34,6 +34,7 @@ class SettingsWindow(QWidget):
         self.ghost_count = self._spin("ghost_count")
         self.ghost_scale = self._spin("ghost_scale", "×")
         self.opacity = self._spin("opacity", " %")
+        self.props = QCheckBox("Pumpkins and graves")
         self.launch_at_startup = QCheckBox("Launch at Windows sign-in")
         close = QDialogButtonBox(QDialogButtonBox.Close)
         close.rejected.connect(self.close)
@@ -46,11 +47,12 @@ class SettingsWindow(QWidget):
         form.addRow("Number of ghosts:", self.ghost_count)
         form.addRow("Ghost size:", self.ghost_scale)
         form.addRow("Ghost opacity:", self.opacity)
+        form.addRow(self.props)
         form.addRow(self.launch_at_startup)
         form.addRow(close)
 
         self.show_settings(settings)
-        for box in (self.enabled, self.launch_at_startup):
+        for box in (self.enabled, self.props, self.launch_at_startup):
             box.toggled.connect(self._changed)
         for spin in (self.idle_timeout, self.ghost_count, self.ghost_scale, self.opacity):
             spin.valueChanged.connect(self._changed)
@@ -64,7 +66,7 @@ class SettingsWindow(QWidget):
     def show_settings(self, s):
         """Refresh widgets without firing change callbacks."""
         self.settings = s
-        for name in ("enabled", "launch_at_startup"):
+        for name in ("enabled", "props", "launch_at_startup"):
             box = getattr(self, name)
             box.blockSignals(True)
             box.setChecked(getattr(s, name))
@@ -84,4 +86,5 @@ class SettingsWindow(QWidget):
             ghost_scale=self.ghost_scale.value(),
             opacity=self.opacity.value(),
             launch_at_startup=self.launch_at_startup.isChecked(),
+            props=self.props.isChecked(),
         ))

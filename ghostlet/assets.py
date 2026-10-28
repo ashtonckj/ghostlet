@@ -8,12 +8,23 @@ from pathlib import Path
 
 from PySide6.QtGui import QColor, QImage, QPixmap
 
-from ghostlet.ghost import SLEEPING, STATES
+from ghostlet.ghost import PROP_KINDS, SLEEPING, STATES
 
 ASSET_DIR = Path(__file__).parent / "assets"
 
-# Built-in 32x32 placeholder; also what tools/make_placeholder.py writes to disk.
-PALETTE = {"K": "#2b2b3a", "E": "#2b2b3a", "W": "#f4f6ff", "S": "#c9cfe8", "P": "#ffb3c7"}
+# Built-in placeholders; also what tools/make_placeholder.py writes to disk.
+PALETTE = {
+    "K": "#2b2b3a",  # outline
+    "E": "#2b2b3a",  # eyes
+    "W": "#f4f6ff",  # ghost body
+    "S": "#c9cfe8",  # ghost shade
+    "P": "#ffb3c7",  # blush
+    "O": "#ff8c1a",  # pumpkin
+    "D": "#c25a00",  # pumpkin ridge
+    "G": "#4a8c2a",  # stem, grass
+    "L": "#b4b8cc",  # stone
+    "R": "#8a8fa8",  # stone shade
+}
 GHOST = [
     "................................",
     "................................",
@@ -49,6 +60,51 @@ GHOST = [
     "................................",
 ]
 GHOST_ASLEEP = GHOST[:12] + [GHOST[12].replace("E", "W")] + GHOST[13:]  # eyes half closed
+
+
+def _mirror(half):
+    return [row + row[::-1] for row in half]
+
+
+# 16x16 props, drawn as left halves and mirrored.
+PROP_ART = {
+    "pumpkin": _mirror([
+        "........",
+        "........",
+        "........",
+        "........",
+        ".......G",
+        "...KKKKG",
+        "..KOODOO",
+        ".KOODOOO",
+        ".KODKKOO",
+        ".KODKKOO",
+        ".KODOOOO",
+        ".KODKOKO",
+        ".KODKKKK",
+        ".KOODOOO",
+        "..KOODOO",
+        "...KKKKK",
+    ]),
+    "grave": _mirror([
+        "........",
+        "........",
+        "....KKKK",
+        "...KLLLL",
+        "..KLLLLL",
+        "..KLLLKK",
+        "..KLLKKK",
+        "..KLLLKK",
+        "..KLLLKK",
+        "..KLLLLL",
+        "..KLLLLL",
+        "..KRLLLL",
+        "..KRRRRR",
+        ".GKGGGGG",
+        "GGGGGGGG",
+        "GGGGGGGG",
+    ]),
+}
 
 # Pixel UI icons used by assets/ui/style.qss; written at 2x by tools/make_placeholder.py.
 UI_ART = {
@@ -91,6 +147,14 @@ def _load(path):
 def _frame_number(path):
     suffix = path.stem.rsplit("_", 1)[-1]
     return int(suffix) if suffix.isdigit() else None
+
+
+def load_props():
+    """Return {kind: QPixmap} from <kind>.png, falling back to the built-in art."""
+    return {
+        kind: _load(ASSET_DIR / f"{kind}.png") or QPixmap.fromImage(art_to_image(PROP_ART[kind]))
+        for kind in PROP_KINDS
+    }
 
 
 def load_frames():

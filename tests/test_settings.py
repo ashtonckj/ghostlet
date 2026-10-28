@@ -12,7 +12,7 @@ def test_missing_file_gives_defaults(tmp_path):
 
 def test_round_trip(tmp_path):
     path = tmp_path / "sub" / "settings.json"
-    s = Settings(enabled=False, idle_timeout=120, ghost_count=3, ghost_scale=4, opacity=50, launch_at_startup=True)
+    s = Settings(enabled=False, idle_timeout=120, ghost_count=3, ghost_scale=4, opacity=50, launch_at_startup=True, props=False)
     settings.save(s, path)
     assert settings.load(path) == s
 

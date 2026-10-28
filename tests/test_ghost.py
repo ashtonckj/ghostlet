@@ -5,11 +5,14 @@ from ghostlet.ghost import (
     FLEE_TIME,
     FLEEING,
     FLOATING,
+    GRAB_TIME,
     IDLE,
     IDLE_TIME,
     SLEEP_AFTER,
     SLEEPING,
     Ghost,
+    Prop,
+    prop_spots,
 )
 
 
@@ -72,3 +75,35 @@ def test_frame_index_wraps():
     run(g, 10)
     assert 0 <= g.frame(3) < 3
     assert g.frame(1) == 0
+
+
+def test_prop_spots_spread_inside_bounds():
+    xs = prop_spots(100, 1100, 5, random.Random(3))
+    assert len(xs) == 5 and xs == sorted(xs)
+    assert all(100 <= x <= 1100 for x in xs)
+    assert min(b - a for a, b in zip(xs, xs[1:])) > 0
+
+
+def test_prop_rests_then_is_carried_away_with_ghost():
+    g = make()
+    p = Prop("pumpkin", 300, 1000)
+    for _ in range(40):
+        g.update(1 / 30)
+        p.update(1 / 30)
+    assert (p.x, p.y) == (300, 1000) and p.alpha == 1.0 and not p.gone
+
+    g.flee(g.x - 10, g.y)
+    p.grab(g, 20)
+    p.grab(make(), 99)  # a second grab must not steal it
+    t = 0.0
+    while t < GRAB_TIME + 0.05:
+        g.update(1 / 30)
+        p.update(1 / 30)
+        t += 1 / 30
+    assert p.carrier is g
+    assert math.isclose(p.x, g.x) and math.isclose(p.y, g.y + 20)
+    assert p.alpha <= g.alpha
+    while not g.gone:
+        g.update(1 / 30)
+        p.update(1 / 30)
+    assert p.gone and p.alpha == 0

@@ -1,10 +1,10 @@
-"""One small transparent, click-through, always-on-top window per ghost."""
+"""One small transparent, click-through, always-on-top window per ghost or prop."""
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPainter
 from PySide6.QtWidgets import QWidget
 
 
-class GhostWindow(QWidget):
+class SpriteWindow(QWidget):
     def __init__(self):
         super().__init__(
             None,
@@ -21,10 +21,12 @@ class GhostWindow(QWidget):
         self.alpha = 1.0
         self.flip = False
 
-    def set_frame(self, pixmap, alpha, flip):
+    def set_frame(self, pixmap, alpha, flip=False):
         if pixmap is not self.pixmap:
             self.pixmap = pixmap
             self.setFixedSize(pixmap.size())
+        elif (alpha, flip) == (self.alpha, self.flip):
+            return  # nothing changed: skip the repaint (resting props)
         self.alpha, self.flip = alpha, flip
         self.update()
 

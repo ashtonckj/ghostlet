@@ -23,6 +23,7 @@ class Settings:
     ghost_scale: int = 2  # art is drawn at its native size times this
     opacity: int = 90  # percent
     launch_at_startup: bool = False
+    props: bool = True  # pumpkins and graves along the bottom of the screen
 
 
 def default_path():

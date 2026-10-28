@@ -15,8 +15,9 @@
 </div>
 
 Leave your mouse alone for a minute and a little pixel ghost floats up around your cursor.
-It drifts around, and if you stay away long enough it dozes off. When you come back, it
-panics and flees off the screen. 👻
+It drifts around while pumpkins and gravestones pop up along the bottom of your screen.
+Stay away long enough and it dozes off. When you come back, it panics, grabs the
+decorations and flees off the screen. 👻🎃
 
 | <img src="docs/ghost.png" width="96" alt="Awake ghost"> | <img src="docs/sleeping_0.png" width="96" alt="Sleeping ghost"> |
 |:---:|:---:|

@@ -6,19 +6,20 @@ import sys
 from dataclasses import replace
 
 from PySide6.QtCore import QElapsedTimer, QObject, Qt, QTimer
-from PySide6.QtGui import QAction, QCursor, QIcon
+from PySide6.QtGui import QAction, QCursor, QGuiApplication, QIcon
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
 from PySide6.QtWidgets import QApplication, QMenu, QMessageBox, QSystemTrayIcon
 
 from ghostlet import __version__, assets, idle, settings, startup, theme
-from ghostlet.ghost import IDLE, Ghost
-from ghostlet.overlay import GhostWindow
+from ghostlet.ghost import IDLE, PROP_KINDS, Ghost, Prop, prop_spots
+from ghostlet.overlay import SpriteWindow
 from ghostlet.settings import MAX_GHOSTS
 from ghostlet.settings_window import SettingsWindow
 
 SERVER_NAME = f"ghostlet-{getpass.getuser()}"
 POLL_MS = 1000  # idle check while no ghosts are out
 FRAME_MS = 33  # ~30 fps only while ghosts are visible
+EXTRA_PROPS = 2  # props per haunt = ghost count + this; ghosts carry the extras stacked
 
 
 class Ghostlet(QObject):
@@ -28,12 +29,15 @@ class Ghostlet(QObject):
         self.settings = settings.load(self.path)
         self.paused = False
         self.ghosts = []
+        self.props = []
         self.last_idle = 0.0
         self.settings_window = None
 
         self.frames = assets.load_frames()
         self.icon = QIcon(self.frames[IDLE][0])
-        self.windows = [GhostWindow() for _ in range(MAX_GHOSTS)]
+        self.prop_art = assets.load_props()
+        self.windows = [SpriteWindow() for _ in range(MAX_GHOSTS)]
+        self.prop_windows = [SpriteWindow() for _ in range(MAX_GHOSTS + EXTRA_PROPS)]
         self._rescale()
 
         self.server = server
@@ -103,7 +107,7 @@ class Ghostlet(QObject):
         )
 
     def exit(self):
-        for w in self.windows:
+        for w in self.windows + self.prop_windows:
             w.hide()
         self.tray.hide()
         QApplication.quit()
@@ -125,7 +129,7 @@ class Ghostlet(QObject):
             pass  # keep running with in-memory settings; next change retries the save
         if new.ghost_scale != old.ghost_scale:
             self._rescale()
-        for w in self.windows:
+        for w in self.windows + self.prop_windows:
             w.setWindowOpacity(new.opacity / 100)
         if not new.enabled:
             self.scare()
@@ -150,7 +154,11 @@ class Ghostlet(QObject):
             state: [pm.scaled(pm.size() * scale, Qt.KeepAspectRatio, Qt.FastTransformation) for pm in pms]
             for state, pms in self.frames.items()
         }
-        for w in self.windows:
+        self.scaled_props = {
+            kind: pm.scaled(pm.size() * scale, Qt.KeepAspectRatio, Qt.FastTransformation)
+            for kind, pm in self.prop_art.items()
+        }
+        for w in self.windows + self.prop_windows:
             w.setWindowOpacity(self.settings.opacity / 100)
 
     # --- ghosts -----------------------------------------------------------
@@ -161,14 +169,33 @@ class Ghostlet(QObject):
             pos = QCursor.pos()
             rng = random.Random()
             self.ghosts = [Ghost(pos.x(), pos.y(), rng) for _ in range(self.settings.ghost_count)]
+            if self.settings.props:
+                self._spawn_props(pos, rng)
             self.last_idle = idle.idle_seconds()
             self.clock.start()
             self.frame_timer.start()
+
+    def _spawn_props(self, pos, rng):
+        screen = QGuiApplication.screenAt(pos) or QGuiApplication.primaryScreen()
+        area = screen.availableGeometry()  # excludes the taskbar
+        count = len(self.ghosts) + EXTRA_PROPS
+        for x in prop_spots(area.left() + 40, area.right() - 40, count, rng):
+            kind = rng.choice(PROP_KINDS)
+            h = self.scaled_props[kind].height()
+            self.props.append(Prop(kind, x, area.bottom() - h / 2))
 
     def scare(self):
         pos = QCursor.pos()
         for g in self.ghosts:
             g.flee(pos.x(), pos.y())
+        # Hand props out round-robin; a ghost's extra props hang below the previous one.
+        ghost_h = self.scaled[IDLE][0].height()
+        below = [ghost_h * 0.2] * len(self.ghosts)  # tuck the first prop under the ghost's tail
+        for i, p in enumerate(self.props):
+            n = i % len(self.ghosts)
+            h = self.scaled_props[p.kind].height()
+            p.grab(self.ghosts[n], below[n] + h / 2)
+            below[n] += h * 0.7  # sprites have transparent padding rows
 
     def tick(self):
         dt = min(self.clock.restart() / 1000, 0.1)  # cap so a stall never teleports ghosts
@@ -179,13 +206,21 @@ class Ghostlet(QObject):
 
         for g in self.ghosts:
             g.update(dt)
+        for p in self.props:
+            p.update(dt)
         if all(g.gone for g in self.ghosts):
-            self.ghosts = []
+            self.ghosts, self.props = [], []
             self.frame_timer.stop()
-            for w in self.windows:
+            for w in self.windows + self.prop_windows:
                 w.hide()
             return
 
+        # Props first: windows shown later stack on top, so ghosts hold props from above.
+        for p, w in zip(self.props, self.prop_windows):
+            w.set_frame(self.scaled_props[p.kind], p.alpha)
+            w.move(int(p.x - w.width() / 2), int(p.y - w.height() / 2))
+            if w.isHidden():
+                w.show()
         for g, w in zip(self.ghosts, self.windows):
             frames = self.scaled[g.state]
             w.set_frame(frames[g.frame(len(frames))], g.alpha, g.facing_left)
