@@ -50,6 +50,28 @@ GHOST = [
 ]
 GHOST_ASLEEP = GHOST[:12] + [GHOST[12].replace("E", "W")] + GHOST[13:]  # eyes half closed
 
+# Pixel UI icons used by assets/ui/style.qss; written at 2x by tools/make_placeholder.py.
+UI_ART = {
+    "check": [
+        "......K",
+        ".....KK",
+        "K...KK.",
+        "KK.KK..",
+        ".KKK...",
+        "..K....",
+    ],
+    "up": [
+        "..K..",
+        ".KKK.",
+        "KKKKK",
+    ],
+    "down": [
+        "KKKKK",
+        ".KKK.",
+        "..K..",
+    ],
+}
+
 
 def art_to_image(rows):
     img = QImage(len(rows[0]), len(rows), QImage.Format_ARGB32)

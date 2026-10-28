@@ -10,8 +10,10 @@ Thanks for wanting to help the ghosts! Code, artwork, bug reports and ideas are 
    are visible beyond the 1-second idle check. Animate only while something is on screen.
 3. **Keep it small.** No new dependency without discussing it in an issue first. Prefer the
    standard library and PySide6.
-4. **Match the code around you**: naming, comment style, and plain functions over class hierarchies.
-5. **Never steal focus or block clicks.** Overlays must stay click-through and must not activate.
+4. **One pixel look everywhere.** UI styling goes in `ghostlet/assets/ui/style.qss`, using its
+   palette and square corners, never in Python code.
+5. **Match the code around you**: naming, comment style, and plain functions over class hierarchies.
+6. **Never steal focus or block clicks.** Overlays must stay click-through and must not activate.
 
 For anything bigger than a bug fix, please open an issue first so we can agree on the approach.
 
@@ -75,11 +77,13 @@ ghostlet/
   ghost.py                 ghost states and motion (pure Python, tested)
   settings.py              load/save/validate settings (tested)
   settings_window.py       settings window
+  theme.py                 pixel-art look: loads assets/ui/style.qss and the UI font
   overlay.py               transparent click-through ghost window
   assets.py                artwork loading + built-in placeholder art
   idle.py                  Win32 idle time
   startup.py               launch-at-sign-in registry entry
   assets/                  ghost.png, sleeping_0.png, ghost.ico, art guide
+    ui/                    style.qss + pixel icons for the settings window and tray menu
 docs/                      README images
 tools/make_placeholder.py  regenerates placeholder art and README images
 tests/                     pytest tests

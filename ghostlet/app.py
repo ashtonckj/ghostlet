@@ -10,7 +10,7 @@ from PySide6.QtGui import QAction, QCursor, QIcon
 from PySide6.QtNetwork import QLocalServer, QLocalSocket
 from PySide6.QtWidgets import QApplication, QMenu, QMessageBox, QSystemTrayIcon
 
-from ghostlet import __version__, assets, idle, settings, startup
+from ghostlet import __version__, assets, idle, settings, startup, theme
 from ghostlet.ghost import IDLE, Ghost
 from ghostlet.overlay import GhostWindow
 from ghostlet.settings import MAX_GHOSTS
@@ -75,7 +75,7 @@ class Ghostlet(QObject):
 
     def show_settings(self):
         if not self.settings_window:
-            self.settings_window = SettingsWindow(self.settings, self.apply_settings, self.icon)
+            self.settings_window = SettingsWindow(self.settings, self.apply_settings, self.frames[IDLE][0])
         w = self.settings_window
         w.show()
         w.setWindowState(w.windowState() & ~Qt.WindowMinimized)
@@ -213,6 +213,7 @@ def main():
     app.setQuitOnLastWindowClosed(False)  # lives in the tray
     if _signal_running_instance():
         return 0
+    theme.apply(app)
     server = QLocalServer()
     QLocalServer.removeServer(SERVER_NAME)  # clear a stale name left by a crash
     server.listen(SERVER_NAME)

@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from PySide6.QtCore import Qt  # noqa: E402
 from PySide6.QtGui import QGuiApplication, QImage  # noqa: E402
 
-from ghostlet.assets import ASSET_DIR, GHOST, GHOST_ASLEEP, art_to_image  # noqa: E402
+from ghostlet.assets import ASSET_DIR, GHOST, GHOST_ASLEEP, UI_ART, art_to_image  # noqa: E402
 
 app = QGuiApplication(sys.argv)
 ASSET_DIR.mkdir(exist_ok=True)
@@ -19,6 +19,9 @@ ghost.save(str(ASSET_DIR / "ghost.png"))
 art_to_image(GHOST_ASLEEP).save(str(ASSET_DIR / "sleeping_0.png"))
 # Exe/tray icon, upscaled with hard pixel edges.
 ghost.scaled(256, 256, Qt.KeepAspectRatio, Qt.FastTransformation).save(str(ASSET_DIR / "ghost.ico"))
+for name, art in UI_ART.items():
+    img = art_to_image(art)
+    img.scaled(img.size() * 2, Qt.KeepAspectRatio, Qt.FastTransformation).save(str(ASSET_DIR / "ui" / f"{name}.png"))
 print("Wrote placeholder art to", ASSET_DIR)
 
 # README images: browsers blur small PNGs when enlarging, so pre-scale with hard edges.

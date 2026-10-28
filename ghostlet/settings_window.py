@@ -2,10 +2,13 @@
 from dataclasses import replace
 
 from PySide6.QtCore import Qt
+from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import (
     QCheckBox,
     QDialogButtonBox,
     QFormLayout,
+    QLabel,
+    QLayout,
     QSpinBox,
     QWidget,
 )
@@ -14,11 +17,17 @@ from ghostlet.settings import LIMITS
 
 
 class SettingsWindow(QWidget):
-    def __init__(self, settings, on_change, icon):
+    def __init__(self, settings, on_change, ghost_pixmap):
         super().__init__(None, Qt.Window)
+        self.setObjectName("settings")  # style.qss targets #settings
         self.setWindowTitle("Ghostlet Settings")
-        self.setWindowIcon(icon)
+        self.setWindowIcon(QIcon(ghost_pixmap))
         self.on_change = on_change
+
+        ghost = QLabel()
+        ghost.setPixmap(ghost_pixmap.scaled(ghost_pixmap.size() * 2, Qt.KeepAspectRatio, Qt.FastTransformation))
+        title = QLabel("Ghostlet")
+        title.setObjectName("title")
 
         self.enabled = QCheckBox("Show ghosts when I'm idle")
         self.idle_timeout = self._spin("idle_timeout", " s")
@@ -30,6 +39,8 @@ class SettingsWindow(QWidget):
         close.rejected.connect(self.close)
 
         form = QFormLayout(self)
+        form.setSizeConstraint(QLayout.SetFixedSize)  # fixed size that follows the style's metrics
+        form.addRow(ghost, title)
         form.addRow(self.enabled)
         form.addRow("Idle timeout:", self.idle_timeout)
         form.addRow("Number of ghosts:", self.ghost_count)
@@ -43,7 +54,6 @@ class SettingsWindow(QWidget):
             box.toggled.connect(self._changed)
         for spin in (self.idle_timeout, self.ghost_count, self.ghost_scale, self.opacity):
             spin.valueChanged.connect(self._changed)
-        self.setFixedSize(self.sizeHint())
 
     def _spin(self, name, suffix=""):
         spin = QSpinBox()

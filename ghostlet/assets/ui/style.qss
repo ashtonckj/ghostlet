@@ -1,0 +1,107 @@
+/* Ghostlet pixel theme, applied to the settings window, tray menu and message boxes.
+   {ui} expands to this folder. Keep corners square (no border-radius) for the pixel look.
+   Palette: night #2a2140, ink #120e1c, ghost #f4f6ff, pumpkin #ff8c1a, pumpkin-light #ffa64d */
+
+#settings, QMessageBox {
+    background: #2a2140;
+}
+#settings QLabel, #settings QCheckBox, QMessageBox QLabel {
+    color: #f4f6ff;
+}
+#title {
+    color: #ff8c1a;
+    font-size: 28px;
+}
+
+QPushButton {
+    background: #ff8c1a;
+    color: #120e1c;
+    border: 3px solid #120e1c;
+    border-bottom-width: 6px; /* chunky pixel drop shadow */
+    padding: 3px 14px;
+    min-width: 60px;
+}
+QPushButton:hover, QPushButton:focus {
+    background: #ffa64d;
+}
+QPushButton:pressed {
+    border-bottom-width: 3px;
+    margin-top: 3px;
+}
+
+QCheckBox {
+    spacing: 8px;
+}
+QCheckBox::indicator {
+    width: 14px;
+    height: 14px;
+    border: 3px solid #120e1c;
+    background: #f4f6ff;
+}
+QCheckBox::indicator:hover {
+    background: #ffe0c2;
+}
+QCheckBox::indicator:checked {
+    background: #ff8c1a;
+    image: url({ui}/check.png);
+}
+
+QSpinBox {
+    background: #f4f6ff;
+    color: #120e1c;
+    border: 3px solid #120e1c;
+    padding: 2px 4px;
+    min-width: 80px;
+    selection-background-color: #ff8c1a;
+    selection-color: #120e1c;
+}
+QSpinBox::up-button, QSpinBox::down-button {
+    width: 18px;
+    background: #ff8c1a;
+    border-left: 3px solid #120e1c;
+}
+QSpinBox::up-button {
+    subcontrol-position: top right;
+    border-bottom: 2px solid #120e1c;
+}
+QSpinBox::down-button {
+    subcontrol-position: bottom right;
+}
+QSpinBox::up-button:hover, QSpinBox::down-button:hover {
+    background: #ffa64d;
+}
+QSpinBox::up-arrow {
+    image: url({ui}/up.png);
+}
+QSpinBox::down-arrow {
+    image: url({ui}/down.png);
+}
+
+QMenu {
+    background: #2a2140;
+    color: #f4f6ff;
+    border: 3px solid #120e1c;
+    padding: 4px;
+}
+QMenu::item {
+    padding: 5px 20px 5px 28px;
+}
+QMenu::item:selected {
+    background: #ff8c1a;
+    color: #120e1c;
+}
+QMenu::separator {
+    height: 3px;
+    background: #120e1c;
+    margin: 4px 0;
+}
+QMenu::indicator {
+    width: 14px;
+    height: 14px;
+    left: 6px;
+    border: 2px solid #f4f6ff;
+}
+QMenu::indicator:checked {
+    background: #ff8c1a;
+    image: url({ui}/check.png);
+}

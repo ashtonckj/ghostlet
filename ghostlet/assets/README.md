@@ -30,6 +30,16 @@ Frames play at 4 fps (`ANIM_FPS` in `ghostlet/ghost.py`) and loop.
 - Any size works; 32×32 is the default. All frames of one state should be the same size.
 - The "Ghost size" setting scales the art by a whole number with hard pixel edges, so keep it small.
 
+## Settings window and tray menu
+
+The pixel look of the normal windows lives in `ui/`:
+
+- `ui/style.qss` sets colours, borders and sizes. It is a Qt style sheet (CSS-like), and
+  `{ui}` in it points at this `ui/` folder. Keep corners square for the pixel look.
+- `ui/check.png`, `ui/up.png` and `ui/down.png` are the checkbox tick and the number-box arrows.
+- To use a pixel font, drop a `.ttf` or `.otf` file into `ui/`. It is picked up automatically,
+  and Consolas is used without one. Include the font's license file next to it.
+
 ## After changing files
 
 - From source: restart Ghostlet.
