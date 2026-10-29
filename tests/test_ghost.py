@@ -8,11 +8,16 @@ from ghostlet.ghost import (
     GRAB_TIME,
     IDLE,
     IDLE_TIME,
+    MAX_PROPS,
+    PROP_EVERY,
+    RARE_ODDS,
     SLEEP_AFTER,
     SLEEPING,
     Ghost,
     Prop,
+    pick_weighted,
     prop_spots,
+    props_due,
 )
 
 
@@ -107,3 +112,27 @@ def test_prop_rests_then_is_carried_away_with_ghost():
         g.update(1 / 30)
         p.update(1 / 30)
     assert p.gone and p.alpha == 0
+
+
+def test_props_grow_over_time_up_to_the_cap():
+    assert props_due(0) == 3
+    assert props_due(PROP_EVERY - 0.1) == 3
+    assert props_due(PROP_EVERY) == 4
+    assert props_due(10_000) == MAX_PROPS
+
+
+def test_rare_art_is_picked_less_often():
+    rng = random.Random(7)
+    names = ["pumpkin", "pumpkin_gold_rare"]
+    picks = [pick_weighted(rng, names) for _ in range(5500)]
+    rare = picks.count("pumpkin_gold_rare")
+    assert 250 < rare < 750  # expected 500 with RARE_ODDS == 10
+    assert RARE_ODDS == 10
+    assert pick_weighted(rng, ["only"]) == "only"
+
+
+def test_roaming_ghost_drifts_wider_and_keeps_its_variant():
+    g = Ghost(0, 0, random.Random(1), drift=5, variant="gold_rare")
+    near = make(seed=1)
+    assert g.rx == near.rx * 5 and g.variant == "gold_rare"
+    assert near.variant == "default"

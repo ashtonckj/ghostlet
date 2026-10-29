@@ -19,8 +19,9 @@ ghost.save(str(ASSET_DIR / "ghost.png"))
 art_to_image(GHOST_ASLEEP).save(str(ASSET_DIR / "sleeping_0.png"))
 # Exe/tray icon, upscaled with hard pixel edges.
 ghost.scaled(256, 256, Qt.KeepAspectRatio, Qt.FastTransformation).save(str(ASSET_DIR / "ghost.ico"))
+(ASSET_DIR / "props").mkdir(exist_ok=True)
 for name, art in PROP_ART.items():
-    art_to_image(art).save(str(ASSET_DIR / f"{name}.png"))
+    art_to_image(art).save(str(ASSET_DIR / "props" / f"{name}.png"))
 for name, art in UI_ART.items():
     img = art_to_image(art)
     img.scaled(img.size() * 2, Qt.KeepAspectRatio, Qt.FastTransformation).save(str(ASSET_DIR / "ui" / f"{name}.png"))

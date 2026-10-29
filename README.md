@@ -34,7 +34,9 @@ decorations and flees off the screen. 👻🎃
   [SECURITY.md](SECURITY.md).
 - **Yours to tweak.** You can change the idle time, ghost count (up to 5), size, opacity and
   whether it starts at sign-in.
-- **Bring your own art.** Drop in new PNG frames; see the
+- **More company the longer you're away.** Extra ghosts roam the screen, pumpkins pile up,
+  and keep an eye out for rare designs.
+- **Bring your own art.** Drop a PNG into a folder and it's in, no code needed. See the
   [art guide](ghostlet/assets/README.md).
 
 ## Get it

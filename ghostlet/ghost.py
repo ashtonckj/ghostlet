@@ -6,14 +6,14 @@ Coordinates are screen pixels of the ghost's centre. States:
   sleeping - dozes after floating for a while
   fleeing  - user came back: dart away from the cursor and fade out
 
-Props (pumpkins, graves) rest along the bottom of the screen while ghosts are out.
-When the ghosts flee, each prop is snatched by a ghost and carried away.
+The first ghost stays near the cursor; any others roam the screen.
+Props (pumpkins, graves) rest along the bottom of the screen while ghosts are out, and
+more appear the longer you are away. When the ghosts flee, they carry the props off.
 """
 import math
 
 IDLE, FLOATING, SLEEPING, FLEEING = "idle", "floating", "sleeping", "fleeing"
 STATES = (IDLE, FLOATING, SLEEPING, FLEEING)
-PROP_KINDS = ("pumpkin", "grave")
 
 FADE_IN = 1.0  # seconds
 IDLE_TIME = 3.0  # seconds hovering before drifting
@@ -23,17 +23,23 @@ FLEE_SPEED = 300.0  # pixels per second at the start of fleeing
 ANIM_FPS = 4  # frame rate for multi-frame artwork
 FOLLOW = 3.0  # how fast the ghost eases toward its target (per second)
 GRAB_TIME = 0.3  # seconds for a fleeing ghost to snatch its prop
+ROAM_DRIFT = 5.0  # roaming ghosts drift this many times wider than the cursor companion
+START_PROPS = 3
+PROP_EVERY = 30.0  # seconds between extra props
+MAX_PROPS = 12
+RARE_ODDS = 10  # art with "rare" in its name is this many times less likely
 
 
 class Ghost:
-    def __init__(self, cx, cy, rng):
+    def __init__(self, cx, cy, rng, drift=1.0, variant="default"):
+        self.variant = variant  # art folder name; the app picks the frames
         angle = rng.uniform(0, math.tau)
         dist = rng.uniform(50, 120)
         self.home_x = cx + math.cos(angle) * dist
         self.home_y = cy + math.sin(angle) * dist
         self.x, self.y = self.home_x, self.home_y
-        self.rx = rng.uniform(30, 70)  # drift radius
-        self.ry = rng.uniform(15, 35)
+        self.rx = rng.uniform(30, 70) * drift  # drift radius
+        self.ry = rng.uniform(15, 35) * drift
         self.phase = rng.uniform(0, math.tau)
         self.vx = self.vy = 0.0
         self.alpha = 0.0
@@ -132,3 +138,14 @@ def prop_spots(left, right, count, rng):
     """Spread count x positions evenly across [left, right], with a little jitter."""
     slot = (right - left) / count
     return [left + slot * (i + rng.uniform(0.25, 0.75)) for i in range(count)]
+
+
+def props_due(elapsed):
+    """How many props should be out after this many seconds of haunting."""
+    return min(MAX_PROPS, START_PROPS + int(elapsed // PROP_EVERY))
+
+
+def pick_weighted(rng, names):
+    """Pick a random art name; names containing "rare" are RARE_ODDS times less likely."""
+    weights = [1 if "rare" in n.lower() else RARE_ODDS for n in names]
+    return rng.choices(names, weights=weights)[0]

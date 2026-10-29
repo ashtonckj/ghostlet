@@ -82,7 +82,9 @@ ghostlet/
   assets.py                artwork loading + built-in placeholder art
   idle.py                  Win32 idle time
   startup.py               launch-at-sign-in registry entry
-  assets/                  ghost.png, sleeping_0.png, pumpkin.png, grave.png, ghost.ico, art guide
+  assets/                  main ghost art, ghost.ico, art guide
+    ghosts/<name>/         extra ghost designs for roaming ghosts (scanned at startup)
+    props/                 pumpkins, graves, ... (every PNG is used, scanned at startup)
     ui/                    style.qss + pixel icons for the settings window and tray menu
 docs/                      README images
 tools/make_placeholder.py  regenerates placeholder art and README images

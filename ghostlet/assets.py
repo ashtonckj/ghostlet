@@ -3,14 +3,18 @@
 File naming (see assets/README.md):
   ghost.png            base image, used for any state without its own frames
   <state>_<n>.png      animation frames, e.g. floating_0.png, floating_1.png
+  ghosts/<name>/       extra ghost designs for roaming ghosts, same file names as above
+  props/*.png          every PNG here is a prop (pumpkin, grave, ...), picked at random
 """
 from pathlib import Path
 
 from PySide6.QtGui import QColor, QImage, QPixmap
 
-from ghostlet.ghost import PROP_KINDS, SLEEPING, STATES
+from ghostlet.ghost import SLEEPING, STATES
 
 ASSET_DIR = Path(__file__).parent / "assets"
+GHOST_DIR = ASSET_DIR / "ghosts"
+PROP_DIR = ASSET_DIR / "props"
 
 # Built-in placeholders; also what tools/make_placeholder.py writes to disk.
 PALETTE = {
@@ -150,20 +154,28 @@ def _frame_number(path):
 
 
 def load_props():
-    """Return {kind: QPixmap} from <kind>.png, falling back to the built-in art."""
-    return {
-        kind: _load(ASSET_DIR / f"{kind}.png") or QPixmap.fromImage(art_to_image(PROP_ART[kind]))
-        for kind in PROP_KINDS
-    }
+    """Return {name: QPixmap} for every PNG in props/; the built-in art if there are none."""
+    props = {p.stem: pm for p in sorted(PROP_DIR.glob("*.png")) if (pm := _load(p))}
+    return props or {name: QPixmap.fromImage(art_to_image(art)) for name, art in PROP_ART.items()}
 
 
-def load_frames():
+def load_ghost_variants():
+    """Return {name: frames}: "default" (the main ghost) plus one per folder in ghosts/."""
+    variants = {"default": load_frames()}
+    if GHOST_DIR.is_dir():
+        for folder in sorted(GHOST_DIR.iterdir()):
+            if folder.is_dir():
+                variants[folder.name] = load_frames(folder)
+    return variants
+
+
+def load_frames(folder=ASSET_DIR):
     """Return {state: [QPixmap, ...]}; every state gets at least one frame."""
-    base = _load(ASSET_DIR / "ghost.png")
+    base = _load(folder / "ghost.png")
     frames = {}
     for state in STATES:
         files = sorted(
-            (p for p in ASSET_DIR.glob(f"{state}_*.png") if _frame_number(p) is not None),
+            (p for p in folder.glob(f"{state}_*.png") if _frame_number(p) is not None),
             key=_frame_number,
         )
         found = [pm for pm in map(_load, files) if pm]
