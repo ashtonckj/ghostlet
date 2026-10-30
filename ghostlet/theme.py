@@ -1,7 +1,8 @@
 """Pixel-art look for every normal window: settings, tray menu and message boxes.
 
 Restyle by editing assets/ui/style.qss; `{ui}` in it expands to the assets/ui folder.
-Drop a pixel font (.ttf/.otf) into assets/ui/ and it is used automatically.
+Every .ttf/.otf in assets/ui/ is registered, and style.qss chooses which font each part uses
+by family name (`font-family`), so adding a font means dropping the file in and naming it there.
 """
 from PySide6.QtGui import QFont, QFontDatabase
 
@@ -11,21 +12,14 @@ UI_DIR = ASSET_DIR / "ui"
 
 
 def apply(app):
+    for path in sorted(UI_DIR.iterdir()):
+        if path.suffix.lower() in (".ttf", ".otf"):
+            QFontDatabase.addApplicationFont(str(path))  # unreadable fonts are skipped
+    font = QFont()
+    font.setStyleStrategy(QFont.NoAntialias)  # hard pixel edges; family and size come from the QSS
+    app.setFont(font)
     try:
         qss = (UI_DIR / "style.qss").read_text(encoding="utf-8")
         app.setStyleSheet(qss.replace("{ui}", UI_DIR.as_posix()))
     except OSError:
         pass  # missing theme: keep the plain Qt look
-
-    font = QFont("Consolas")  # fallback when no pixel font is bundled
-    for path in sorted([*UI_DIR.glob("*.ttf"), *UI_DIR.glob("*.otf")]):
-        families = QFontDatabase.applicationFontFamilies(QFontDatabase.addApplicationFont(str(path)))
-        if families:
-            font = QFont(families[0])
-            break
-    font.setPixelSize(14)
-    font.setStyleStrategy(QFont.NoAntialias)  # hard pixel edges
-    # Windows gives menus and message boxes their own font, so set each.
-    # Must come after setStyleSheet, which resets these per-class fonts.
-    for widget_class in (None, "QMenu", "QMessageBox", "QMessageBoxLabel"):
-        app.setFont(font, widget_class)

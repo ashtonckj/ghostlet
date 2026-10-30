@@ -97,10 +97,16 @@ The pixel look of the normal windows lives in `ui/`:
 - `ui/style.qss` sets colours, borders and sizes. It is a Qt style sheet (CSS-like), and
   `{ui}` in it points at this `ui/` folder. Keep corners square for the pixel look.
 - `ui/check.png`, `ui/up.png` and `ui/down.png` are the checkbox tick and the number-box arrows.
-- The font is whichever `.ttf` or `.otf` file sits in `ui/` (Pixelify Sans is there now). It is
-  picked up automatically, and Consolas is used if there is none. With several font files, the
-  first by name wins, so keep just one. Keep the font's license file (for example `OFL.txt`) next to it.
-  The font must be in this `ui/` folder; one anywhere else, such as the project root, is ignored.
+- Every `.ttf` or `.otf` file in `ui/` is loaded, and `style.qss` says which font each part uses, by
+  family name: `04B_30` for all text and `KiwiSoda` for the "Ghostlet" title. To switch a font, drop
+  the file in `ui/` and change its `font-family` in `style.qss`. Consolas is the fallback if a font
+  is missing. A font anywhere else, such as the project root, is ignored.
+- To find a font's family name, install it or open it in Windows' font viewer. It is often not the
+  file name (`04B_30__.TTF` is `04b`).
+- `04B_30` is drawn on an 8 px grid, so keep its sizes at multiples of 8 to stay crisp. KiwiSoda
+  draws small, so the title is set bigger (`font-size` under `#title`).
+- Keep each font's license file next to it, and check the license allows shipping the font in
+  a public repository.
 
 ## After changing files
 
