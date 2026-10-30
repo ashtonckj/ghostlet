@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/ghost.png" alt="Ghostlet ghost">
+<img src="ghostlet/assets/ghost.png" width="100" alt="Ghostlet ghost" style="image-rendering: pixelated; image-rendering: crisp-edges;">
 
 # Ghostlet
 
