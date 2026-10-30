@@ -24,6 +24,7 @@ class Settings:
     opacity: int = 90  # percent
     launch_at_startup: bool = False
     props: bool = True  # pumpkins and graves along the bottom of the screen
+    check_updates: bool = True  # ask GitHub for a newer release once a day
 
 
 def default_path():

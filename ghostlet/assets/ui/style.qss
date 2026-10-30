@@ -2,10 +2,10 @@
    {ui} expands to this folder. Keep corners square (no border-radius) for the pixel look.
    Palette: night #2a2140, ink #120e1c, ghost #f4f6ff, pumpkin #ff8c1a, pumpkin-light #ffa64d */
 
-#settings, QMessageBox {
+#settings, QMessageBox, QProgressDialog {
     background: #2a2140;
 }
-#settings QLabel, #settings QCheckBox, QMessageBox QLabel {
+#settings QLabel, #settings QCheckBox, QMessageBox QLabel, QProgressDialog QLabel {
     color: #f4f6ff;
 }
 #title {
@@ -98,6 +98,17 @@ QSlider::handle:horizontal {
 }
 QSlider::handle:horizontal:hover {
     background: #ffa64d;
+}
+
+QProgressBar {
+    background: #f4f6ff;
+    color: #120e1c;
+    border: 3px solid #120e1c;
+    text-align: center;
+    min-height: 16px;
+}
+QProgressBar::chunk {
+    background: #ff8c1a;
 }
 
 QComboBox {

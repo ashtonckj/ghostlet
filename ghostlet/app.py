@@ -1,7 +1,9 @@
 """Ghostlet entry point: tray icon, single-instance guard, idle polling and ghost animation."""
 import ctypes
 import getpass
+import os
 import random
+import subprocess
 import sys
 from dataclasses import replace
 
@@ -26,11 +28,14 @@ from ghostlet.ghost import (
 from ghostlet.overlay import SpriteWindow
 from ghostlet.settings import MAX_GHOSTS
 from ghostlet.settings_window import SettingsWindow
+from ghostlet.update import Updater, cleanup
 
 SERVER_NAME = f"ghostlet-{getpass.getuser()}"
 POLL_MS = 1000  # idle check while no ghosts are out
 FRAME_MS = 33  # ~30 fps only while ghosts are visible
 PROTECT_SECONDS = 3.0  # previews and test haunts ignore input this long
+UPDATE_FIRST_MS = 10_000  # first update check, a little after start
+UPDATE_EVERY_MS = 24 * 60 * 60 * 1000  # then once a day while running
 
 
 class Ghostlet(QObject):
@@ -57,6 +62,9 @@ class Ghostlet(QObject):
 
         self.server = server
         server.newConnection.connect(self._on_second_instance)
+        self.updater = Updater(self)
+        QTimer(self, interval=UPDATE_EVERY_MS, timeout=self._auto_check).start()
+        QTimer.singleShot(UPDATE_FIRST_MS, self._auto_check)
 
         self.clock = QElapsedTimer()
         self.poll_timer = QTimer(self, interval=POLL_MS, timeout=self.poll)
@@ -79,6 +87,7 @@ class Ghostlet(QObject):
         self.startup_action.setChecked(self.settings.launch_at_startup)
         self.startup_action.toggled.connect(self._startup_toggled)
         menu.addAction(self.startup_action)
+        menu.addAction("Check for updates", lambda: self.updater.check(manual=True))
         menu.addAction("About Ghostlet", self.about)
         menu.addSeparator()
         menu.addAction("Exit", self.exit)
@@ -119,9 +128,32 @@ class Ghostlet(QObject):
             None,
             "About Ghostlet",
             f"<b>Ghostlet v{__version__}</b><br>A tiny ghost that keeps you company while you're away."
-            "<br><br>Runs fully offline. No accounts, analytics or telemetry."
+            "<br><br>No accounts, analytics or telemetry. The only network use is an optional check for"
+            " new releases on GitHub (turn it off in Settings)."
             "<br>Only the time of your last input is read; no keys, screens or files.",
         )
+
+    def _auto_check(self):
+        if self.settings.check_updates:
+            self.updater.check()
+
+    def restart_into(self, exe):
+        """Start exe as the new Ghostlet, then quit.
+
+        The single-instance pipe is freed first, or the new copy would think we are still running.
+        """
+        self.server.close()
+        try:
+            subprocess.Popen(
+                [str(exe)],
+                # Without this the new onefile exe would reuse our temp folder, which dies when we quit.
+                env={**os.environ, "PYINSTALLER_RESET_ENVIRONMENT": "1"},
+                creationflags=subprocess.DETACHED_PROCESS | subprocess.CREATE_NEW_PROCESS_GROUP,
+            )
+        except OSError:
+            self.server.listen(SERVER_NAME)
+            raise
+        self.exit()
 
     def exit(self):
         for w in self.windows + self.prop_windows:
@@ -316,6 +348,7 @@ def main():
     if _signal_running_instance():
         return 0
     theme.apply(app)
+    cleanup()
     server = QLocalServer()
     QLocalServer.removeServer(SERVER_NAME)  # clear a stale name left by a crash
     server.listen(SERVER_NAME)

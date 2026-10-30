@@ -48,6 +48,7 @@ class SettingsWindow(QWidget):
         self.enabled = QCheckBox("Show ghosts when I'm idle")
         self.props = QCheckBox("Pumpkins and graves")
         self.launch_at_startup = QCheckBox("Launch at Windows sign-in")
+        self.check_updates = QCheckBox("Check for updates")
         # The size slider walks SIZE_OPTIONS by index, so it only offers crisp sizes.
         self.ghost_scale, self.size_label, size_row = self._slider(0, len(SIZE_OPTIONS) - 1)
         self.ghost_count, self.count_label, count_row = self._slider(*LIMITS["ghost_count"])
@@ -69,6 +70,7 @@ class SettingsWindow(QWidget):
         form.addRow(self.enabled)
         form.addRow(self.props)
         form.addRow(self.launch_at_startup)
+        form.addRow(self.check_updates)
         form.addRow("Entity size:", size_row)
         form.addRow("Number of ghosts:", count_row)
         form.addRow("Idle timeout:", self.idle_timeout)
@@ -77,7 +79,7 @@ class SettingsWindow(QWidget):
         form.addRow(close)
 
         self.show_settings(settings)
-        for box in (self.enabled, self.props, self.launch_at_startup):
+        for box in (self.enabled, self.props, self.launch_at_startup, self.check_updates):
             box.toggled.connect(self._changed)
         for spin in (self.idle_timeout, self.opacity):
             spin.valueChanged.connect(self._changed)
@@ -112,7 +114,7 @@ class SettingsWindow(QWidget):
     def show_settings(self, s):
         """Refresh widgets without firing change callbacks."""
         self.settings = s
-        for name in ("enabled", "props", "launch_at_startup"):
+        for name in ("enabled", "props", "launch_at_startup", "check_updates"):
             box = getattr(self, name)
             box.blockSignals(True)
             box.setChecked(getattr(s, name))
@@ -140,4 +142,5 @@ class SettingsWindow(QWidget):
             opacity=self.opacity.value(),
             launch_at_startup=self.launch_at_startup.isChecked(),
             props=self.props.isChecked(),
+            check_updates=self.check_updates.isChecked(),
         ))
