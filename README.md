@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/ghost.png" width="128" alt="Ghostlet pixel-art ghost">
+<img src="ghostlet/assets/ghost.png" width="128" alt="Ghostlet pixel-art ghost">
 
 # Ghostlet
 
@@ -19,7 +19,7 @@ It drifts around while pumpkins and gravestones pop up along the bottom of your 
 Stay away long enough and it dozes off. When you come back, it panics, grabs the
 decorations and flees off the screen. 👻🎃
 
-| <img src="docs/ghost.png" width="96" alt="Awake ghost"> | <img src="docs/sleeping_0.png" width="96" alt="Sleeping ghost"> |
+| <img src="ghostlet/assets/ghost.png" width="96" alt="Awake ghost"> | <img src="ghostlet/assets/sleeping.png" width="96" alt="Sleeping ghost"> |
 |:---:|:---:|
 | *floating about* | *zzz…* |
 

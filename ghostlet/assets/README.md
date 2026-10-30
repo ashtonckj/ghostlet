@@ -5,10 +5,10 @@ dropping in a file. You don't need to edit any code or keep a list.
 
 ```
 assets/
-  ghost.png, sleeping_0.png, ...   the original ghost design
+  ghost.png, sleeping.png, ...   the original ghost design
   ghosts/                          one folder per extra design (an expression, a colour, ...)
     happy/ghost.png
-    happy/sleeping_0.png           its own sleeping pose (optional)
+    happy/sleeping.png           its own sleeping pose (optional)
     grumpy/ghost.png               no sleeping image: it sleeps with this face
     gold_crown_rare/ghost.png      "rare" in the name = 10x less likely to appear
   props/
@@ -44,7 +44,7 @@ Example: a two-frame floating animation and a sleeping pose:
 ghost.png
 floating_0.png
 floating_1.png
-sleeping_0.png
+sleeping.png
 ```
 
 Frames play at 4 fps (`ANIM_FPS` in `ghostlet/ghost.py`) and loop.
@@ -54,7 +54,7 @@ Every file except `ghost.png` is optional:
 | What you put in the folder | What the ghost does when asleep |
 |------|------|
 | only `ghost.png` | keeps its awake face |
-| `sleeping_0.png` | shows that one sleeping pose |
+| `sleeping.png` | shows that one sleeping pose |
 | `sleeping_0.png`, `sleeping_1.png`, ... | plays them as a sleeping animation |
 
 The same goes for `idle_`, `floating_` and `fleeing_` frames.
@@ -117,7 +117,7 @@ The pixel look of the normal windows lives in `ui/`:
 
 If a file is missing or unreadable, Ghostlet falls back to `ghost.png`, then to a built-in placeholder.
 An empty `props/` folder falls back to the built-in pumpkin and grave.
-Note: `sleeping_0.png` is the placeholder's sleeping pose. Replace it or delete it when you swap `ghost.png`.
+Note: `sleeping.png` is the placeholder's sleeping pose. Replace it or delete it when you swap `ghost.png`.
 
 To regenerate the placeholder files: `python tools/make_placeholder.py`. This **overwrites**
-`ghost.png`, `sleeping_0.png`, `props/pumpkin.png` and `props/grave.png`.
+`ghost.png`, `sleeping.png`, `props/pumpkin.png` and `props/grave.png`.
