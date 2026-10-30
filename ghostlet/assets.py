@@ -165,13 +165,30 @@ def load_ghost_variants():
     if GHOST_DIR.is_dir():
         for folder in sorted(GHOST_DIR.iterdir()):
             if folder.is_dir():
-                variants[folder.name] = load_frames(folder)
+                frames = load_frames(folder, builtin=False)
+                if frames:  # a folder with no usable image is skipped, never drawn as the placeholder
+                    variants[folder.name] = frames
     return variants
 
 
-def load_frames(folder=ASSET_DIR):
-    """Return {state: [QPixmap, ...]}; every state gets at least one frame."""
-    base = _load(folder / "ghost.png")
+def _find_base(folder):
+    """ghost.png, else the first PNG that isn't a numbered animation frame (e.g. ghost_cool.png)."""
+    preferred = folder / "ghost.png"
+    if preferred.exists():
+        return preferred
+    for p in sorted(folder.glob("*.png")):
+        if not (p.stem.split("_")[0] in STATES and _frame_number(p) is not None):
+            return p
+    return None
+
+
+def load_frames(folder=ASSET_DIR, builtin=True):
+    """Return {state: [QPixmap, ...]}; every state gets at least one frame.
+
+    With builtin=False a folder that has no usable image returns None instead of the placeholder.
+    """
+    base_file = _find_base(folder)
+    base = _load(base_file) if base_file else None
     frames = {}
     for state in STATES:
         files = sorted(
@@ -179,7 +196,9 @@ def load_frames(folder=ASSET_DIR):
             key=_frame_number,
         )
         found = [pm for pm in map(_load, files) if pm]
-        if not found and not base:  # assets missing entirely: use the built-in art
+        if not found and not base:
+            if not builtin:
+                return None
             found = [QPixmap.fromImage(art_to_image(GHOST_ASLEEP if state == SLEEPING else GHOST))]
         frames[state] = found or [base]
     return frames

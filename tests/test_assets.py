@@ -43,3 +43,46 @@ def test_every_font_family_named_in_the_qss_is_registered():
     have = {f.lower() for f in QFontDatabase.families()}
     for family in wanted:
         assert family.lower() in have, f"{family} is named in style.qss but no font file in assets/ui provides it"
+
+
+def test_every_ghost_folder_is_drawn_from_its_own_png_not_the_placeholder():
+    import os
+
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtGui import QImage
+    from PySide6.QtWidgets import QApplication
+
+    from ghostlet.assets import GHOST, GHOST_DIR, art_to_image, load_ghost_variants
+
+    app = QApplication.instance() or QApplication([])
+    fmt = QImage.Format_ARGB32
+    placeholder = art_to_image(GHOST).convertToFormat(fmt)
+    folders = {d.name for d in GHOST_DIR.iterdir() if d.is_dir()}
+    variants = load_ghost_variants()
+    assert set(variants) == folders | {"default"}, "a ghosts/ folder has no usable PNG and was skipped"
+    for name in folders:
+        shown = variants[name]["idle"][0].toImage().convertToFormat(fmt)
+        assert shown != placeholder, f"ghosts/{name} is showing the built-in placeholder"
+
+
+def test_ghost_folder_accepts_any_png_name_and_empty_folder_is_skipped(tmp_path, monkeypatch):
+    import os
+
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtGui import QImage
+    from PySide6.QtWidgets import QApplication
+
+    from ghostlet import assets
+
+    app = QApplication.instance() or QApplication([])
+    (tmp_path / "cool").mkdir()
+    (tmp_path / "empty").mkdir()
+    (tmp_path / "numbered").mkdir()
+    img = QImage(8, 8, QImage.Format_ARGB32)
+    img.fill(0xFF00FF00)
+    img.save(str(tmp_path / "cool" / "ghost_cool.png"))
+    img.save(str(tmp_path / "numbered" / "idle_0.png"))  # only a state frame, no base image
+    monkeypatch.setattr(assets, "GHOST_DIR", tmp_path)
+    variants = assets.load_ghost_variants()
+    assert "cool" in variants and variants["cool"]["sleeping"][0].width() == 8
+    assert "empty" not in variants and "numbered" not in variants
