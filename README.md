@@ -6,10 +6,10 @@
 
 **Step away from your PC. Tiny ghosts move in.** 👻
 
-![Hacktoberfest 2026](https://img.shields.io/badge/Hacktoberfest-2026-ff6b00?style=for-the-badge)
-![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078d4?style=for-the-badge)
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=for-the-badge&logo=python&logoColor=white)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
+[![Hacktoberfest 2026](https://img.shields.io/badge/Hacktoberfest-2026-orange?labelColor=383838&style=for-the-badge)](https://hacktoberfest.com/)
+![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078d4?labelColor=383838&style=for-the-badge)
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?labelColor=383838&style=for-the-badge&logo=python&logoColor=white)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow?labelColor=383838&style=for-the-badge)
 
 </div>
 
