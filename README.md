@@ -19,6 +19,8 @@ Leave your mouse alone for a minute and pixel ghosts float up around your cursor
 
 Each ghost picks a random look.
 
+<div align="center">
+
 | <img src="docs/ghosts/default.png" alt="classic ghost"> | <img src="docs/ghosts/cool.png" alt="cool ghost"> | <img src="docs/ghosts/crying.png" alt="crying ghost"> |
 |:-:|:-:|:-:|
 | classic | cool | crying |
@@ -26,8 +28,6 @@ Each ghost picks a random look.
 | hunting | loving | magic |
 | <img src="docs/ghosts/peeping.png" alt="peeping ghost"> | <img src="docs/ghosts/shiver.png" alt="shivering ghost"> | <img src="docs/ghosts/sleeping.png" alt="sleeping ghost"> |
 | peeping | shivering | sleeping |
-
-<div align="center">
 
 <img src="docs/ghosts/rare.png" alt="the rare witch ghost">
 
@@ -37,11 +37,15 @@ Each ghost picks a random look.
 
 ## 🎃 Spooky props
 
+<div align="center">
+
 | <img src="docs/props/grave.png" alt="grave"> | <img src="docs/props/pumpkin.png" alt="pumpkin"> | <img src="docs/props/pumpkin_1.png" alt="red pumpkin"> | <img src="docs/props/skeleton.png" alt="skeleton"> | <img src="docs/props/spider.png" alt="spider"> |
 |:-:|:-:|:-:|:-:|:-:|
 | grave | pumpkin | red pumpkin | skeleton | spider |
 
 The longer you're away, the more pile up. When you're back, the ghosts carry them off.
+
+</div>
 
 ## 💾 Get it
 
