@@ -23,3 +23,23 @@ def test_ui_art_rows_are_even_and_theme_images_exist():
     qss = (UI_DIR / "style.qss").read_text(encoding="utf-8")
     for name in re.findall(r"url\(\{ui\}/([^)]+)\)", qss):
         assert (UI_DIR / name).exists(), name
+
+
+def test_every_font_family_named_in_the_qss_is_registered():
+    import os
+    import re
+
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtGui import QFontDatabase
+    from PySide6.QtWidgets import QApplication
+
+    from ghostlet import theme
+
+    app = QApplication.instance() or QApplication([])
+    theme.apply(app)
+    qss = (theme.UI_DIR / "style.qss").read_text(encoding="utf-8")
+    wanted = set(re.findall(r'font-family:\s*"([^"]+)"', qss))
+    assert wanted  # the theme names its fonts
+    have = {f.lower() for f in QFontDatabase.families()}
+    for family in wanted:
+        assert family.lower() in have, f"{family} is named in style.qss but no font file in assets/ui provides it"

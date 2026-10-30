@@ -66,6 +66,7 @@ class SettingsWindow(QWidget):
 
         form = QFormLayout(self)
         form.setSizeConstraint(QLayout.SetFixedSize)  # fixed size that follows the style's metrics
+        form.setHorizontalSpacing(14)
         form.addRow(ghost, header)
         form.addRow(self.enabled)
         form.addRow(self.props)
