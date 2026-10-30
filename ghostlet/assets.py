@@ -3,6 +3,7 @@
 File naming (see assets/README.md):
   ghost.png            base image, used for any state without its own frames
   <state>_<n>.png      animation frames, e.g. floating_0.png, floating_1.png
+  <state>.png          a single pose for that state, e.g. sleeping.png
   ghosts/<name>/       extra ghost designs for roaming ghosts, same file names as above
   props/*.png          every PNG here is a prop (pumpkin, grave, ...), picked at random
 """
@@ -177,7 +178,8 @@ def _find_base(folder):
     if preferred.exists():
         return preferred
     for p in sorted(folder.glob("*.png")):
-        if not (p.stem.split("_")[0] in STATES and _frame_number(p) is not None):
+        is_state_frame = p.stem in STATES or (p.stem.split("_")[0] in STATES and _frame_number(p) is not None)
+        if not is_state_frame:
             return p
     return None
 
@@ -195,6 +197,8 @@ def load_frames(folder=ASSET_DIR, builtin=True):
             (p for p in folder.glob(f"{state}_*.png") if _frame_number(p) is not None),
             key=_frame_number,
         )
+        if not files and (folder / f"{state}.png").exists():
+            files = [folder / f"{state}.png"]  # a single pose can skip the _0 suffix
         found = [pm for pm in map(_load, files) if pm]
         if not found and not base:
             if not builtin:
