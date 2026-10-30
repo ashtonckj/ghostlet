@@ -1,11 +1,10 @@
 from PySide6.QtGui import QColor
 
-from ghostlet.assets import GHOST, GHOST_ASLEEP, art_to_image
+from ghostlet.assets import GHOST, art_to_image
 
 
 def test_placeholder_is_32x32_with_transparent_background():
-    for art in (GHOST, GHOST_ASLEEP):
-        assert len(art) == 32 and all(len(row) == 32 for row in art)
+    assert len(GHOST) == 32 and all(len(row) == 32 for row in GHOST)
     img = art_to_image(GHOST)
     assert (img.width(), img.height()) == (32, 32)
     assert img.pixelColor(0, 0).alpha() == 0
@@ -84,7 +83,7 @@ def test_ghost_folder_accepts_any_png_name_and_empty_folder_is_skipped(tmp_path,
     img.save(str(tmp_path / "numbered" / "idle_0.png"))  # only a state frame, no base image
     monkeypatch.setattr(assets, "GHOST_DIR", tmp_path)
     variants = assets.load_ghost_variants()
-    assert "cool" in variants and variants["cool"]["sleeping"][0].width() == 8
+    assert "cool" in variants and variants["cool"]["floating"][0].width() == 8
     assert "empty" not in variants and "numbered" not in variants
 
 
@@ -98,10 +97,10 @@ def test_single_pose_file_without_a_number_is_used_for_its_state(tmp_path):
     from ghostlet import assets
 
     app = QApplication.instance() or QApplication([])
-    for name, size in (("ghost_x.png", 8), ("sleeping.png", 4)):
+    for name, size in (("ghost_x.png", 8), ("floating.png", 4)):
         img = QImage(size, size, QImage.Format_ARGB32)
         img.fill(0xFF00FF00)
         img.save(str(tmp_path / name))
     frames = assets.load_frames(tmp_path, builtin=False)
-    assert frames["idle"][0].width() == 8  # base image is not mistaken for the sleeping pose
-    assert frames["sleeping"][0].width() == 4
+    assert frames["idle"][0].width() == 8  # base image is not mistaken for the floating pose
+    assert frames["floating"][0].width() == 4

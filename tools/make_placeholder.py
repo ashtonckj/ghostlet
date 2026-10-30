@@ -13,7 +13,6 @@ from PySide6.QtGui import QGuiApplication
 from ghostlet.assets import (
     ASSET_DIR,
     GHOST,
-    GHOST_ASLEEP,
     PROP_ART,
     UI_ART,
     art_to_image,
@@ -23,7 +22,6 @@ app = QGuiApplication(sys.argv)
 ASSET_DIR.mkdir(exist_ok=True)
 ghost = art_to_image(GHOST)
 ghost.save(str(ASSET_DIR / "ghost.png"))
-art_to_image(GHOST_ASLEEP).save(str(ASSET_DIR / "sleeping.png"))
 # Exe/tray icon, upscaled with hard pixel edges.
 ghost.scaled(256, 256, Qt.KeepAspectRatio, Qt.FastTransformation).save(str(ASSET_DIR / "ghost.ico"))
 (ASSET_DIR / "props").mkdir(exist_ok=True)

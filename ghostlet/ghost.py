@@ -2,8 +2,7 @@
 
 Coordinates are screen pixels of the ghost's centre. States:
   idle     - just appeared, fades in and bobs in place
-  floating - drifts gently around its home spot
-  sleeping - dozes after floating for a while
+  floating - drifts gently around its home spot, for as long as you are away
   fleeing  - user came back: dart away from the cursor and fade out
 
 The first ghost stays near the cursor; any others roam the screen.
@@ -12,12 +11,11 @@ more appear the longer you are away. When the ghosts flee, they carry the props 
 """
 import math
 
-IDLE, FLOATING, SLEEPING, FLEEING = "idle", "floating", "sleeping", "fleeing"
-STATES = (IDLE, FLOATING, SLEEPING, FLEEING)
+IDLE, FLOATING, FLEEING = "idle", "floating", "fleeing"
+STATES = (IDLE, FLOATING, FLEEING)
 
 FADE_IN = 1.0  # seconds
 IDLE_TIME = 3.0  # seconds hovering before drifting
-SLEEP_AFTER = 120.0  # seconds of floating before dozing off
 FLEE_TIME = 0.8  # seconds to run off and vanish
 FLEE_SPEED = 300.0  # pixels per second at the start of fleeing
 ANIM_FPS = 4  # frame rate for multi-frame artwork
@@ -97,16 +95,10 @@ class Ghost:
         self.alpha = min(1.0, self.alpha + dt / FADE_IN)
         if self.state == IDLE and self.state_time >= IDLE_TIME:
             self._set_state(FLOATING)
-        elif self.state == FLOATING and self.state_time >= SLEEP_AFTER:
-            self.home_x, self.home_y = self.x, self.y  # fall asleep where it is
-            self._set_state(SLEEPING)
 
-        if self.state == SLEEPING:
-            tx, ty = self.home_x, self.home_y + 2 * math.sin(t)
-        else:
-            amp = min(1.0, self.state_time / 2) if self.state == FLOATING else 0.0
-            tx = self.home_x + self.rx * amp * math.sin(0.5 * t + self.phase)
-            ty = self.home_y + self.ry * amp * math.sin(0.8 * t + self.phase) + 4 * math.sin(2 * t)
+        amp = min(1.0, self.state_time / 2) if self.state == FLOATING else 0.0
+        tx = self.home_x + self.rx * amp * math.sin(0.5 * t + self.phase)
+        ty = self.home_y + self.ry * amp * math.sin(0.8 * t + self.phase) + 4 * math.sin(2 * t)
 
         if abs(tx - self.x) > 0.5:
             self.facing_left = tx < self.x

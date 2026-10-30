@@ -11,8 +11,6 @@ from ghostlet.ghost import (
     MAX_PROPS,
     PROP_EVERY,
     RARE_ODDS,
-    SLEEP_AFTER,
-    SLEEPING,
     Ghost,
     Prop,
     pick_weighted,
@@ -42,8 +40,11 @@ def test_state_progression():
     g = make()
     run(g, IDLE_TIME + 0.1)
     assert g.state == FLOATING
-    run(g, SLEEP_AFTER)
-    assert g.state == SLEEPING
+    run(g, 600)
+    assert g.state == FLOATING  # ghosts never doze off: they keep flying while you are away
+    x = g.x
+    run(g, 5)
+    assert g.x != x  # and they are still moving
 
 
 def test_floating_stays_near_home():

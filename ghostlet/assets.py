@@ -3,7 +3,7 @@
 File naming (see assets/README.md):
   ghost.png            base image, used for any state without its own frames
   <state>_<n>.png      animation frames, e.g. floating_0.png, floating_1.png
-  <state>.png          a single pose for that state, e.g. sleeping.png
+  <state>.png          a single pose for that state, e.g. floating.png
   ghosts/<name>/       extra ghost designs for roaming ghosts, same file names as above
   props/*.png          every PNG here is a prop (pumpkin, grave, ...), picked at random
 """
@@ -11,7 +11,7 @@ from pathlib import Path
 
 from PySide6.QtGui import QColor, QImage, QPixmap
 
-from ghostlet.ghost import SLEEPING, STATES
+from ghostlet.ghost import STATES
 
 ASSET_DIR = Path(__file__).parent / "assets"
 GHOST_DIR = ASSET_DIR / "ghosts"
@@ -64,7 +64,6 @@ GHOST = [
     "................................",
     "................................",
 ]
-GHOST_ASLEEP = GHOST[:12] + [GHOST[12].replace("E", "W")] + GHOST[13:]  # eyes half closed
 
 
 def _mirror(half):
@@ -203,6 +202,6 @@ def load_frames(folder=ASSET_DIR, builtin=True):
         if not found and not base:
             if not builtin:
                 return None
-            found = [QPixmap.fromImage(art_to_image(GHOST_ASLEEP if state == SLEEPING else GHOST))]
+            found = [QPixmap.fromImage(art_to_image(GHOST))]
         frames[state] = found or [base]
     return frames

@@ -33,8 +33,7 @@ python run_ghostlet.py
 
 Tip: use **Settings → Dev settings → Test spawn** to see the ghosts right away. Your mouse
 won't scare them off for 3 s. Extra ghosts appear one by one over 20 s (`SPAWN_WINDOW` in
-`ghostlet/ghost.py`), and they only fall asleep after about 2 minutes; lower `SLEEP_AFTER`
-there while you test sleeping art.
+`ghostlet/ghost.py`). Ghosts never fall asleep: they keep floating until you come back.
 
 ## Tests
 

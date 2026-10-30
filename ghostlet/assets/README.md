@@ -5,11 +5,10 @@ dropping in a file. You don't need to edit any code or keep a list.
 
 ```
 assets/
-  ghost.png, sleeping.png, ...   the original ghost design
+  ghost.png                        the original ghost design
   ghosts/                          one folder per extra design (an expression, a colour, ...)
     happy/ghost.png
-    happy/sleeping.png           its own sleeping pose (optional)
-    grumpy/ghost.png               no sleeping image: it sleeps with this face
+    grumpy/ghost.png
     gold_crown_rare/ghost.png      "rare" in the name = 10x less likely to appear
   props/
     pumpkin.png                    every PNG in here is a prop
@@ -26,39 +25,33 @@ Every ghost gets a random design each time it appears: the original one in this 
 any folder in `ghosts/`. The first ghost stays near your cursor. With "Number of ghosts"
 above 1, the others roam the whole screen.
 
-A design is a folder, not a single PNG, so that its awake face, sleeping face and any
-animation frames stay together. For a new expression, make a folder and put its PNGs in it.
+A design is a folder, not a single PNG, so that its face and any animation frames stay together.
+For a new expression, make a folder and put its PNG in it. One PNG is all a design needs.
 
 Each design (this folder for the original, or a `ghosts/<name>/` folder) uses these files:
 
 | File | Used for |
 |------|----------|
 | `ghost.png` | Base image. Used for every state that has no frames of its own. Any one PNG in the folder works instead, such as `ghost_cool.png`; `ghost.png` wins if both exist. A folder with no usable PNG is skipped. |
-| `<state>.png` | One pose for a state, e.g. `sleeping.png`. |
+| `<state>.png` | One pose for a state, e.g. `fleeing.png`. |
 | `<state>_<n>.png` | Animation frames for one state, e.g. `floating_0.png`, `floating_1.png`. `n` starts at 0. |
 
-States: `idle`, `floating`, `sleeping`, `fleeing`.
+States: `idle` (just appeared), `floating` (flying around, which is most of the time) and
+`fleeing` (running away when you come back). Ghosts never fall asleep.
 
-Example: a two-frame floating animation and a sleeping pose:
+Example: a two-frame floating animation and a scared face for running away:
 
 ```
 ghost.png
 floating_0.png
 floating_1.png
-sleeping.png
+fleeing.png
 ```
 
 Frames play at 4 fps (`ANIM_FPS` in `ghostlet/ghost.py`) and loop.
 
-Every file except `ghost.png` is optional:
-
-| What you put in the folder | What the ghost does when asleep |
-|------|------|
-| only `ghost.png` | keeps its awake face |
-| `sleeping.png` | shows that one sleeping pose |
-| `sleeping_0.png`, `sleeping_1.png`, ... | plays them as a sleeping animation |
-
-The same goes for `idle_`, `floating_` and `fleeing_` frames.
+Every file except `ghost.png` is optional. Without a state's own file, that state shows
+`ghost.png`.
 
 ## Checking your art
 
@@ -66,8 +59,6 @@ In Settings → **Dev settings**:
 
 - **Test spawn** summons the ghosts and props right away. Moving the mouse won't scare them
   for 3 s, so you get a look. The extra ghosts appear one by one over 20 s.
-- Ghosts only fall asleep after about 2 minutes. To see your sleeping art sooner, lower
-  `SLEEP_AFTER` in `ghostlet/ghost.py` while testing.
 - Changing **Entity size** shows a ghost and a prop by your cursor for 3 s at the new size.
 
 Restart Ghostlet after adding files. It only scans the folders when it starts.
@@ -118,7 +109,6 @@ The pixel look of the normal windows lives in `ui/`:
 
 If a file is missing or unreadable, Ghostlet falls back to `ghost.png`, then to a built-in placeholder.
 An empty `props/` folder falls back to the built-in pumpkin and grave.
-Note: `sleeping.png` is the placeholder's sleeping pose. Replace it or delete it when you swap `ghost.png`.
 
 To regenerate the placeholder files: `python tools/make_placeholder.py`. This **overwrites**
-`ghost.png`, `sleeping.png`, `props/pumpkin.png` and `props/grave.png`.
+`ghost.png`, `props/pumpkin.png` and `props/grave.png`.
