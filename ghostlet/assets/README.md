@@ -34,7 +34,8 @@ Each design (this folder for the original, or a `ghosts/<name>/` folder) uses th
 | File | Used for |
 |------|----------|
 | `ghost.png` | Base image. Used for every state that has no frames of its own. Any one PNG in the folder works instead, such as `ghost_cool.png`; `ghost.png` wins if both exist. A folder with no usable PNG is skipped. |
-| `<state>_<n>.png` | Animation frames for one state. `n` starts at 0. |
+| `<state>.png` | One pose for a state, e.g. `sleeping.png`. |
+| `<state>_<n>.png` | Animation frames for one state, e.g. `floating_0.png`, `floating_1.png`. `n` starts at 0. |
 
 States: `idle`, `floating`, `sleeping`, `fleeing`.
 

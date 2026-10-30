@@ -86,3 +86,22 @@ def test_ghost_folder_accepts_any_png_name_and_empty_folder_is_skipped(tmp_path,
     variants = assets.load_ghost_variants()
     assert "cool" in variants and variants["cool"]["sleeping"][0].width() == 8
     assert "empty" not in variants and "numbered" not in variants
+
+
+def test_single_pose_file_without_a_number_is_used_for_its_state(tmp_path):
+    import os
+
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtGui import QImage
+    from PySide6.QtWidgets import QApplication
+
+    from ghostlet import assets
+
+    app = QApplication.instance() or QApplication([])
+    for name, size in (("ghost_x.png", 8), ("sleeping.png", 4)):
+        img = QImage(size, size, QImage.Format_ARGB32)
+        img.fill(0xFF00FF00)
+        img.save(str(tmp_path / name))
+    frames = assets.load_frames(tmp_path, builtin=False)
+    assert frames["idle"][0].width() == 8  # base image is not mistaken for the sleeping pose
+    assert frames["sleeping"][0].width() == 4
