@@ -90,13 +90,14 @@ The pixel look of the normal windows lives in `ui/`:
   `{ui}` in it points at this `ui/` folder. Keep corners square for the pixel look.
 - `ui/check.png`, `ui/up.png` and `ui/down.png` are the checkbox tick and the number-box arrows.
 - Every `.ttf` or `.otf` file in `ui/` is loaded, and `style.qss` says which font each part uses, by
-  family name: `04B_30` for all text and `KiwiSoda` for the "Ghostlet" title. To switch a font, drop
+  family name: `skeleboom` for all text and `KiwiSoda` for the "Ghostlet" title. To switch a font, drop
   the file in `ui/` and change its `font-family` in `style.qss`. Consolas is the fallback if a font
   is missing. A font anywhere else, such as the project root, is ignored.
 - To find a font's family name, install it or open it in Windows' font viewer. It is often not the
-  file name (`04B_30__.TTF` is `04b`).
-- `04B_30` is drawn on an 8 px grid, so keep its sizes at multiples of 8 to stay crisp. KiwiSoda
-  draws small, so the title is set bigger (`font-size` under `#title`).
+  file name (an old `04B_30__.TTF` here was called `04b`).
+- Pixel fonts look sharpest at the size they were drawn for or a whole multiple of it, so try a few
+  `font-size` values. Skeleboom is set at 24px for easy reading, and KiwiSoda draws small, so the
+  title is set bigger (`font-size` under `#title`).
 - Keep each font's license file next to it, and check the license allows shipping the font in
   a public repository.
 

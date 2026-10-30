@@ -2,11 +2,10 @@
    {ui} expands to this folder. Keep corners square (no border-radius) for the pixel look.
    Palette: night #2a2140, ink #120e1c, ghost #f4f6ff, pumpkin #ff8c1a, pumpkin-light #ffa64d */
 
-/* Fonts live in this folder; name them by family. Falls back to Consolas if one is missing.
-   04B_30 is drawn on an 8 px grid, so keep its sizes at multiples of 8 to stay crisp. */
+/* Fonts live in this folder; name them by family. Falls back to Consolas if one is missing. */
 * {
-    font-family: "04b", Consolas;
-    font-size: 16px;
+    font-family: "skeleboom", Consolas;
+    font-size: 24px;
 }
 
 #settings, QMessageBox, QProgressDialog {
@@ -22,7 +21,7 @@
 }
 #version {
     color: #c9cfe8;
-    font-size: 8px;
+    font-size: 12px;
     padding-bottom: 6px;
 }
 
