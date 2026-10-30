@@ -1,71 +1,74 @@
 <div align="center">
 
-<img src="ghostlet/assets/ghost.png" width="128" alt="Ghostlet pixel-art ghost">
+<img src="docs/ghost.png" alt="Ghostlet ghost">
 
 # Ghostlet
 
-**Step away from your PC, and a tiny ghost moves in.**
+**Step away from your PC. Tiny ghosts move in.** 👻
 
 ![Hacktoberfest 2026](https://img.shields.io/badge/Hacktoberfest-2026-ff6b00?style=for-the-badge)
 ![Windows](https://img.shields.io/badge/Windows-10%20%7C%2011-0078d4?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.10%2B-3776ab?style=for-the-badge&logo=python&logoColor=white)
-![PySide6](https://img.shields.io/badge/PySide6-Qt-41cd52?style=for-the-badge&logo=qt&logoColor=white)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
 
 </div>
 
-Leave your mouse alone for a minute and a little pixel ghost floats up around your cursor.
-It drifts around while pumpkins and gravestones pop up along the bottom of your screen.
-Stay away long enough and it dozes off. When you come back, it panics, grabs the
-decorations and flees off the screen. 👻🎃
+Leave your mouse alone for a minute and pixel ghosts float up around your cursor, while pumpkins, graves and spooky friends pile up along the bottom of your screen. Come back and they panic, grab the decorations and run away! 🎃
 
-| <img src="ghostlet/assets/ghost.png" width="96" alt="Awake ghost"> | <img src="ghostlet/assets/sleeping.png" width="96" alt="Sleeping ghost"> |
-|:---:|:---:|
-| *floating about* | *zzz…* |
+## 👻 Meet the ghosts
 
-## Why you'll like it
+Each ghost picks a random look.
 
-- **Never in the way.** Clicks pass straight through the ghosts, and they never take focus.
-- **Lives in your tray.** It has no window to manage. Right-click the ghost icon for Settings,
-  Pause or Exit.
-- **Featherweight.** Ghostlet checks idle time once a second and only animates while ghosts
-  are out.
-- **Private.** No accounts, no telemetry, no keylogging. The only network use is an update check
-  against this repo's GitHub Releases (off with one checkbox). Details in [SECURITY.md](SECURITY.md).
-- **Yours to tweak.** You can change the idle time, ghost count (up to 10), entity size
-  (0.5× to 3×, with a live preview), opacity and whether it starts at sign-in. Hit
-  **Test spawn** to see it right away.
-- **More company the longer you're away.** Extra ghosts roam the screen, pumpkins pile up,
-  and keep an eye out for rare designs.
-- **Updates itself.** When a new release is out you get a popup: **Update** or **Remind me later**.
-- **Bring your own art.** Drop a PNG into a folder and it's in, no code needed. See the
-  [art guide](ghostlet/assets/README.md).
+| <img src="docs/ghosts/default.png" alt="classic ghost"> | <img src="docs/ghosts/cool.png" alt="cool ghost"> | <img src="docs/ghosts/crying.png" alt="crying ghost"> |
+|:-:|:-:|:-:|
+| classic | cool | crying |
+| <img src="docs/ghosts/hunt.png" alt="hunting ghost"> | <img src="docs/ghosts/love.png" alt="loving ghost"> | <img src="docs/ghosts/magic.png" alt="magic ghost"> |
+| hunting | loving | magic |
+| <img src="docs/ghosts/peeping.png" alt="peeping ghost"> | <img src="docs/ghosts/shiver.png" alt="shivering ghost"> | <img src="docs/ghosts/sleeping.png" alt="sleeping ghost"> |
+| peeping | shivering | sleeping |
 
-## Get it
+<div align="center">
 
-**Just want the ghost?** Grab `Ghostlet.exe` from Releases and double-click it. You don't need
-Python.
+<img src="docs/ghosts/rare.png" alt="the rare witch ghost">
 
-**Run from source:**
+✨ **The rare one!** 10× less likely to show up than any other ghost. ✨
+
+</div>
+
+## 🎃 Spooky props
+
+| <img src="docs/props/grave.png" alt="grave"> | <img src="docs/props/pumpkin.png" alt="pumpkin"> | <img src="docs/props/pumpkin_1.png" alt="red pumpkin"> | <img src="docs/props/skeleton.png" alt="skeleton"> | <img src="docs/props/spider.png" alt="spider"> |
+|:-:|:-:|:-:|:-:|:-:|
+| grave | pumpkin | red pumpkin | skeleton | spider |
+
+The longer you're away, the more pile up. When you're back, the ghosts carry them off.
+
+## 💾 Get it
+
+Grab `Ghostlet.exe` from [Releases](https://github.com/ashtonckj/ghostlet/releases) and double-click it. No Python needed.
+
+Ghostlet lives in your tray (bottom-right). Right-click the ghost for **Settings**.
+
+<details>
+<summary>Run from source or build the exe</summary>
 
 ```powershell
 pip install -r requirements-dev.txt
 python run_ghostlet.py
-```
-
-**Build the exe yourself:**
-
-```powershell
 python -m PyInstaller ghostlet.spec
 ```
 
-Your exe is at `dist\Ghostlet.exe`. Exit Ghostlet from the tray before rebuilding, or Windows
-will refuse to overwrite the running file.
+The last line builds `dist\Ghostlet.exe`. Exit Ghostlet from the tray first, or Windows won't let it overwrite the running file.
 
-## Contributing
+</details>
 
-PRs, pixel art and spooky ideas are welcome! Start with [CONTRIBUTING.md](CONTRIBUTING.md).
+## ✨ Good to know
 
-## License
+- 🖱️ Clicks go straight through the ghosts, and they never steal focus.
+- 🎚️ Settings: up to 10 ghosts, size, opacity and idle time. **Test spawn** shows them right away.
+- 🔒 No accounts, no telemetry. The only network use is an update check on GitHub, with one checkbox to turn it off. See [SECURITY.md](SECURITY.md).
+- 🎨 Add your own ghosts and props by dropping a PNG in a folder, no code. See the [art guide](ghostlet/assets/README.md).
 
-[MIT](LICENSE)
+## 💜 Contributing
+
+Pixel art, ideas and PRs are welcome! Start with [CONTRIBUTING.md](CONTRIBUTING.md). Licensed under [MIT](LICENSE).
