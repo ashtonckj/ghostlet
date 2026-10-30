@@ -18,7 +18,7 @@
 #title {
     color: #ff8c1a;
     font-family: "KiwiSoda", Consolas;
-    font-size: 44px; /* KiwiSoda draws small, so it needs a bigger size than the body text */
+    font-size: 60px; /* KiwiSoda draws small, so it needs a bigger size than the body text */
 }
 #version {
     color: #c9cfe8;
