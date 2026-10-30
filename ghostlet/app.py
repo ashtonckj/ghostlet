@@ -11,7 +11,18 @@ from PySide6.QtNetwork import QLocalServer, QLocalSocket
 from PySide6.QtWidgets import QApplication, QMenu, QMessageBox, QSystemTrayIcon
 
 from ghostlet import __version__, assets, idle, settings, startup, theme
-from ghostlet.ghost import IDLE, MAX_PROPS, ROAM_DRIFT, Ghost, Prop, pick_weighted, prop_spots, props_due
+from ghostlet.ghost import (
+    FLEEING,
+    IDLE,
+    MAX_PROPS,
+    ROAM_DRIFT,
+    SPAWN_WINDOW,
+    Ghost,
+    Prop,
+    pick_weighted,
+    prop_spots,
+    props_due,
+)
 from ghostlet.overlay import SpriteWindow
 from ghostlet.settings import MAX_GHOSTS
 from ghostlet.settings_window import SettingsWindow
@@ -19,6 +30,7 @@ from ghostlet.settings_window import SettingsWindow
 SERVER_NAME = f"ghostlet-{getpass.getuser()}"
 POLL_MS = 1000  # idle check while no ghosts are out
 FRAME_MS = 33  # ~30 fps only while ghosts are visible
+PROTECT_SECONDS = 3.0  # previews and test haunts ignore input this long
 
 
 class Ghostlet(QObject):
@@ -30,6 +42,8 @@ class Ghostlet(QObject):
         self.ghosts = []
         self.props = []
         self.free_spots = []  # unused prop positions for this haunt, in random order
+        self.protect_left = 0.0  # seconds left in which input won't scare the ghosts
+        self.flee_after = False  # previews leave by themselves when protection ends
         self.last_idle = 0.0
         self.settings_window = None
 
@@ -80,7 +94,9 @@ class Ghostlet(QObject):
 
     def show_settings(self):
         if not self.settings_window:
-            self.settings_window = SettingsWindow(self.settings, self.apply_settings, self.frames[IDLE][0])
+            self.settings_window = SettingsWindow(
+                self.settings, self.apply_settings, self.frames[IDLE][0], self.test_haunt
+            )
         w = self.settings_window
         w.show()
         w.setWindowState(w.windowState() & ~Qt.WindowMinimized)
@@ -130,6 +146,7 @@ class Ghostlet(QObject):
             pass  # keep running with in-memory settings; next change retries the save
         if new.ghost_scale != old.ghost_scale:
             self._rescale()
+            self.preview()
         for w in self.windows + self.prop_windows:
             w.setWindowOpacity(new.opacity / 100)
         if not new.enabled:
@@ -170,23 +187,54 @@ class Ghostlet(QObject):
         if self.ghosts or self.paused or not self.settings.enabled:
             return
         if idle.idle_seconds() >= self.settings.idle_timeout:
-            pos = QCursor.pos()
-            self.rng = rng = random.Random()
-            screen = QGuiApplication.screenAt(pos) or QGuiApplication.primaryScreen()
-            self.area = area = screen.availableGeometry()  # excludes the taskbar
-            # The first ghost keeps you company at the cursor; the rest roam the screen.
-            self.ghosts = [Ghost(pos.x(), pos.y(), rng)]
-            for _ in range(self.settings.ghost_count - 1):
-                x, y = rng.uniform(area.left(), area.right()), rng.uniform(area.top(), area.bottom())
-                self.ghosts.append(Ghost(x, y, rng, ROAM_DRIFT, pick_weighted(rng, list(self.variants))))
-            self.free_spots = []
-            if self.settings.props:
-                self.free_spots = prop_spots(area.left() + 40, area.right() - 40, MAX_PROPS, rng)
-                rng.shuffle(self.free_spots)
-            self.haunt_time = 0.0
-            self.last_idle = idle.idle_seconds()
-            self.clock.start()
-            self.frame_timer.start()
+            self.start_haunt()
+
+    def start_haunt(self, protect=0.0):
+        self._end_haunt()
+        pos = QCursor.pos()
+        self.rng = rng = random.Random()
+        screen = QGuiApplication.screenAt(pos) or QGuiApplication.primaryScreen()
+        self.area = area = screen.availableGeometry()  # excludes the taskbar
+        # The first ghost keeps you company at the cursor; the rest roam the screen.
+        self.ghosts = [Ghost(pos.x(), pos.y(), rng, variant=pick_weighted(rng, list(self.variants)))]
+        for _ in range(self.settings.ghost_count - 1):
+            x, y = rng.uniform(area.left(), area.right()), rng.uniform(area.top(), area.bottom())
+            variant = pick_weighted(rng, list(self.variants))
+            self.ghosts.append(Ghost(x, y, rng, ROAM_DRIFT, variant, delay=rng.uniform(0, SPAWN_WINDOW)))
+        if self.settings.props:
+            self.free_spots = prop_spots(area.left() + 40, area.right() - 40, MAX_PROPS, rng)
+            rng.shuffle(self.free_spots)
+        self._run(protect)
+
+    def test_haunt(self):
+        """Dev button: haunt now, even when paused or disabled."""
+        self.start_haunt(PROTECT_SECONDS)
+
+    def preview(self):
+        """Show one ghost and one prop by the cursor for a few seconds, e.g. after a size change."""
+        if self.ghosts and self.ghosts[0].state != FLEEING:
+            self.protect_left = max(self.protect_left, PROTECT_SECONDS)  # already out: stay a bit
+            return
+        self._end_haunt()
+        pos = QCursor.pos()
+        self.rng = rng = random.Random()
+        self.ghosts = [Ghost(pos.x(), pos.y(), rng, variant=pick_weighted(rng, list(self.variants)))]
+        if self.settings.props:
+            self.props = [Prop(pick_weighted(rng, list(self.prop_art)), pos.x() + 90, pos.y() + 70)]
+        self._run(PROTECT_SECONDS, flee_after=True)
+
+    def _run(self, protect=0.0, flee_after=False):
+        self.protect_left, self.flee_after = protect, flee_after
+        self.haunt_time = 0.0
+        self.last_idle = idle.idle_seconds()
+        self.clock.start()
+        self.frame_timer.start()
+
+    def _end_haunt(self):
+        self.ghosts, self.props, self.free_spots = [], [], []
+        self.frame_timer.stop()
+        for w in self.windows + self.prop_windows:
+            w.hide()
 
     def _add_prop(self):
         name = pick_weighted(self.rng, list(self.prop_art))
@@ -196,20 +244,25 @@ class Ghostlet(QObject):
     def scare(self):
         pos = QCursor.pos()
         self.free_spots = []  # no new props once the ghosts run
+        shown = [g for g in self.ghosts if not g.waiting]  # ghosts yet to appear just vanish
         for g in self.ghosts:
             g.flee(pos.x(), pos.y())
         # Hand props out round-robin; a ghost's extra props hang below the previous one.
-        below = [self.scaled[g.variant][IDLE][0].height() * 0.2 for g in self.ghosts]  # tuck under the tail
+        below = [self.scaled[g.variant][IDLE][0].height() * 0.2 for g in shown]  # tuck under the tail
         for i, p in enumerate(self.props):
-            n = i % len(self.ghosts)
+            n = i % len(shown)
             h = self.scaled_props[p.kind].height()
-            p.grab(self.ghosts[n], below[n] + h / 2)
+            p.grab(shown[n], below[n] + h / 2)
             below[n] += h * 0.7  # sprites have transparent padding rows
 
     def tick(self):
         dt = min(self.clock.restart() / 1000, 0.1)  # cap so a stall never teleports ghosts
         now_idle = idle.idle_seconds()
-        if now_idle < self.last_idle:  # any keyboard/mouse input resets the idle clock
+        if self.protect_left > 0:
+            self.protect_left -= dt
+            if self.protect_left <= 0 and self.flee_after:
+                self.scare()
+        elif now_idle < self.last_idle:  # any keyboard/mouse input resets the idle clock
             self.scare()
         self.last_idle = now_idle
         self.haunt_time += dt
@@ -221,10 +274,7 @@ class Ghostlet(QObject):
         for p in self.props:
             p.update(dt)
         if all(g.gone for g in self.ghosts):
-            self.ghosts, self.props = [], []
-            self.frame_timer.stop()
-            for w in self.windows + self.prop_windows:
-                w.hide()
+            self._end_haunt()
             return
 
         new_prop = False
@@ -235,6 +285,8 @@ class Ghostlet(QObject):
                 w.show()
                 new_prop = True
         for g, w in zip(self.ghosts, self.windows):
+            if g.waiting:
+                continue
             frames = self.scaled[g.variant][g.state]
             w.set_frame(frames[g.frame(len(frames))], g.alpha, g.facing_left)
             w.move(int(g.x - w.width() / 2), int(g.y - w.height() / 2))

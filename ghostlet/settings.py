@@ -5,7 +5,7 @@ import os
 from dataclasses import asdict, dataclass, fields
 from pathlib import Path
 
-MAX_GHOSTS = 5
+MAX_GHOSTS = 10
 # (min, max) for every numeric setting; out-of-range values are clamped.
 LIMITS = {
     "idle_timeout": (5, 3600),
@@ -19,7 +19,7 @@ LIMITS = {
 class Settings:
     enabled: bool = True
     idle_timeout: int = 60  # seconds
-    ghost_count: int = 1
+    ghost_count: int = 5
     ghost_scale: int = 2  # art is drawn at its native size times this
     opacity: int = 90  # percent
     launch_at_startup: bool = False

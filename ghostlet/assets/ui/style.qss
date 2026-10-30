@@ -77,6 +77,69 @@ QSpinBox::down-arrow {
     image: url({ui}/down.png);
 }
 
+QSlider::groove:horizontal {
+    height: 6px;
+    background: #f4f6ff;
+    border: 3px solid #120e1c;
+}
+QSlider::sub-page:horizontal {
+    background: #ff8c1a;
+}
+QSlider::handle:horizontal {
+    width: 12px;
+    margin: -9px 0; /* taller than the groove so it sticks out like a pixel knob */
+    background: #ff8c1a;
+    border: 3px solid #120e1c;
+}
+QSlider::handle:horizontal:hover {
+    background: #ffa64d;
+}
+
+QComboBox {
+    background: #f4f6ff;
+    color: #120e1c;
+    border: 3px solid #120e1c;
+    padding: 2px 4px;
+    min-width: 80px;
+}
+QComboBox::drop-down {
+    width: 18px;
+    background: #ff8c1a;
+    border-left: 3px solid #120e1c;
+}
+QComboBox::drop-down:hover {
+    background: #ffa64d;
+}
+QComboBox::down-arrow {
+    image: url({ui}/down.png);
+}
+QComboBox QAbstractItemView {
+    background: #f4f6ff;
+    color: #120e1c;
+    border: 3px solid #120e1c;
+    outline: 0;
+    selection-background-color: #ff8c1a;
+    selection-color: #120e1c;
+}
+
+#settings QGroupBox {
+    color: #ff8c1a;
+    border: 3px solid #120e1c;
+    margin-top: 12px;
+    padding: 12px 6px 6px 6px;
+}
+#settings QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 8px;
+    padding: 0 4px;
+}
+
+QToolTip {
+    background: #2a2140;
+    color: #f4f6ff;
+    border: 2px solid #120e1c;
+}
+
 QMenu {
     background: #2a2140;
     color: #f4f6ff;

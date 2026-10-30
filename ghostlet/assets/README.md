@@ -5,9 +5,11 @@ dropping in a file. You don't need to edit any code or keep a list.
 
 ```
 assets/
-  ghost.png, sleeping_0.png, ...   the main ghost that stays by your cursor
-  ghosts/
-    blue/ghost.png                 a roaming ghost design (one folder per design)
+  ghost.png, sleeping_0.png, ...   the original ghost design
+  ghosts/                          one folder per extra design (an expression, a colour, ...)
+    happy/ghost.png
+    happy/sleeping_0.png           its own sleeping pose (optional)
+    grumpy/ghost.png               no sleeping image: it sleeps with this face
     gold_crown_rare/ghost.png      "rare" in the name = 10x less likely to appear
   props/
     pumpkin.png                    every PNG in here is a prop
@@ -20,11 +22,14 @@ assets/
 
 ## Ghosts
 
-The first ghost stays near your cursor and always uses the main ghost art in this folder.
-With "Number of ghosts" above 1, the extra ghosts roam the whole screen, each using a randomly
-picked design: the main ghost or any folder in `ghosts/`.
+Every ghost gets a random design each time it appears: the original one in this folder or
+any folder in `ghosts/`. The first ghost stays near your cursor. With "Number of ghosts"
+above 1, the others roam the whole screen.
 
-Each design (this folder for the main ghost, or a `ghosts/<name>/` folder) uses these files:
+A design is a folder, not a single PNG, so that its awake face, sleeping face and any
+animation frames stay together. For a new expression, make a folder and put its PNGs in it.
+
+Each design (this folder for the original, or a `ghosts/<name>/` folder) uses these files:
 
 | File | Used for |
 |------|----------|
@@ -43,6 +48,28 @@ sleeping_0.png
 ```
 
 Frames play at 4 fps (`ANIM_FPS` in `ghostlet/ghost.py`) and loop.
+
+Every file except `ghost.png` is optional:
+
+| What you put in the folder | What the ghost does when asleep |
+|------|------|
+| only `ghost.png` | keeps its awake face |
+| `sleeping_0.png` | shows that one sleeping pose |
+| `sleeping_0.png`, `sleeping_1.png`, ... | plays them as a sleeping animation |
+
+The same goes for `idle_`, `floating_` and `fleeing_` frames.
+
+## Checking your art
+
+In Settings → **Dev settings**:
+
+- **Test spawn** summons the ghosts and props right away. Moving the mouse won't scare them
+  for 3 s, so you get a look. The extra ghosts appear one by one over 20 s.
+- Ghosts only fall asleep after about 2 minutes. To see your sleeping art sooner, lower
+  `SLEEP_AFTER` in `ghostlet/ghost.py` while testing.
+- Changing **Entity size** shows a ghost and a prop by your cursor for 3 s at the new size.
+
+Restart Ghostlet after adding files. It only scans the folders when it starts.
 
 ## Props (pumpkins, graves, anything)
 
@@ -76,7 +103,8 @@ The pixel look of the normal windows lives in `ui/`:
 ## After changing files
 
 - From source: restart Ghostlet.
-- Packaged `.exe`: rebuild it (`python -m PyInstaller ghostlet.spec`) — the art is baked in.
+- Packaged `.exe`: exit Ghostlet from the tray, then rebuild it
+  (`python -m PyInstaller ghostlet.spec`) — the art is baked in.
 - For a new `.exe` icon, replace `ghost.ico` (256×256 recommended).
 
 If a file is missing or unreadable, Ghostlet falls back to `ghost.png`, then to a built-in placeholder.

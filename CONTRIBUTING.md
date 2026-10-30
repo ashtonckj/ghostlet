@@ -30,7 +30,10 @@ pip install -r requirements-dev.txt
 python run_ghostlet.py
 ```
 
-Tip: set **Idle timeout** to 5 s in Settings so you don't wait a minute for every test.
+Tip: use **Settings → Dev settings → Test spawn** to see the ghosts right away. Your mouse
+won't scare them off for 3 s. Extra ghosts appear one by one over 20 s (`SPAWN_WINDOW` in
+`ghostlet/ghost.py`), and they only fall asleep after about 2 minutes; lower `SLEEP_AFTER`
+there while you test sleeping art.
 
 ## Tests
 
@@ -54,7 +57,8 @@ Things tests can't cover still need a manual check on Windows before you open a 
 python -m PyInstaller ghostlet.spec
 ```
 
-Output: `dist\Ghostlet.exe`. If you add files under `ghostlet/assets/`, they are bundled
+Output: `dist\Ghostlet.exe`. Exit Ghostlet from the tray first: Windows won't let PyInstaller
+overwrite a running exe (`PermissionError: [WinError 5] Access is denied`). If you add files under `ghostlet/assets/`, they are bundled
 automatically.
 
 ## Artwork

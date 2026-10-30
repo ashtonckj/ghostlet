@@ -32,8 +32,9 @@ decorations and flees off the screen. 👻🎃
   are out.
 - **Private.** Ghostlet is fully offline: no accounts, no telemetry, no keylogging. Details in
   [SECURITY.md](SECURITY.md).
-- **Yours to tweak.** You can change the idle time, ghost count (up to 5), size, opacity and
-  whether it starts at sign-in.
+- **Yours to tweak.** You can change the idle time, ghost count (up to 10), entity size
+  (0.5× to 3×, with a live preview), opacity and whether it starts at sign-in. Hit
+  **Test spawn** to see it right away.
 - **More company the longer you're away.** Extra ghosts roam the screen, pumpkins pile up,
   and keep an eye out for rare designs.
 - **Bring your own art.** Drop a PNG into a folder and it's in, no code needed. See the
@@ -57,7 +58,8 @@ python run_ghostlet.py
 python -m PyInstaller ghostlet.spec
 ```
 
-Your exe is at `dist\Ghostlet.exe`.
+Your exe is at `dist\Ghostlet.exe`. Exit Ghostlet from the tray before rebuilding, or Windows
+will refuse to overwrite the running file.
 
 ## Contributing
 

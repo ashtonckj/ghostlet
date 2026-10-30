@@ -136,3 +136,19 @@ def test_roaming_ghost_drifts_wider_and_keeps_its_variant():
     near = make(seed=1)
     assert g.rx == near.rx * 5 and g.variant == "gold_rare"
     assert near.variant == "default"
+
+
+def test_waiting_ghost_stays_hidden_then_appears():
+    g = Ghost(500, 400, random.Random(1), delay=5)
+    g.update(4)
+    assert g.waiting and g.alpha == 0 and g.time == 0
+    g.update(1.5)
+    assert not g.waiting
+    run(g, 1.1)
+    assert g.alpha == 1.0
+
+
+def test_waiting_ghost_vanishes_at_once_when_scared():
+    g = Ghost(500, 400, random.Random(1), delay=10)
+    g.flee(0, 0)
+    assert g.gone and g.alpha == 0 and not g.waiting

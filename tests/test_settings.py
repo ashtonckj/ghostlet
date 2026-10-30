@@ -7,7 +7,7 @@ from ghostlet.settings import Settings
 def test_missing_file_gives_defaults(tmp_path):
     s = settings.load(tmp_path / "nope.json")
     assert s == Settings()
-    assert s.idle_timeout == 60 and s.ghost_count == 1 and s.launch_at_startup is False
+    assert s.idle_timeout == 60 and s.ghost_count == 5 and s.launch_at_startup is False
 
 
 def test_round_trip(tmp_path):
@@ -39,7 +39,7 @@ def test_invalid_values_are_clamped_or_ignored(tmp_path):
     s = settings.load(path)
     assert s.enabled is True
     assert s.idle_timeout == 5
-    assert s.ghost_count == settings.MAX_GHOSTS == 5
+    assert s.ghost_count == settings.MAX_GHOSTS == 10
     assert s.ghost_scale == Settings().ghost_scale
     assert s.opacity == 55
     assert s.launch_at_startup is False

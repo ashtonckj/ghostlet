@@ -27,12 +27,14 @@ ROAM_DRIFT = 5.0  # roaming ghosts drift this many times wider than the cursor c
 START_PROPS = 3
 PROP_EVERY = 30.0  # seconds between extra props
 MAX_PROPS = 12
+SPAWN_WINDOW = 20.0  # extra ghosts appear at random times within this many seconds
 RARE_ODDS = 10  # art with "rare" in its name is this many times less likely
 
 
 class Ghost:
-    def __init__(self, cx, cy, rng, drift=1.0, variant="default"):
+    def __init__(self, cx, cy, rng, drift=1.0, variant="default", delay=0.0):
         self.variant = variant  # art folder name; the app picks the frames
+        self.delay = delay  # seconds before it appears
         angle = rng.uniform(0, math.tau)
         dist = rng.uniform(50, 120)
         self.home_x = cx + math.cos(angle) * dist
@@ -59,15 +61,25 @@ class Ghost:
         d = math.hypot(dx, dy) or 1.0
         self.vx, self.vy = dx / d * FLEE_SPEED, dy / d * FLEE_SPEED
         self._set_state(FLEEING)
+        if self.delay > 0:  # never appeared: vanish without a trace
+            self.delay = 0.0
+            self.state_time = FLEE_TIME
 
     @property
     def gone(self):
         return self.state == FLEEING and self.state_time >= FLEE_TIME
 
+    @property
+    def waiting(self):
+        return self.delay > 0
+
     def frame(self, count):
         return int(self.time * ANIM_FPS) % count
 
     def update(self, dt):
+        if self.delay > 0:
+            self.delay -= dt
+            return
         self.time += dt
         self.state_time += dt
         t = self.time
