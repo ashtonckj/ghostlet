@@ -5,6 +5,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 from PySide6.QtGui import QPixmap  # noqa: E402
 from PySide6.QtWidgets import QApplication, QPushButton  # noqa: E402
 
+from ghostlet import __version__  # noqa: E402
 from ghostlet.settings import Settings  # noqa: E402
 from ghostlet.settings_window import SIZE_OPTIONS, SettingsWindow  # noqa: E402
 
@@ -34,3 +35,8 @@ def test_defaults_ghost_count_slider_and_test_button():
     {b.text(): b for b in w.findChildren(QPushButton)}["Test spawn"].click()
     assert tests == ["test"]
     assert "Skip 2 min" not in {b.text() for b in w.findChildren(QPushButton)}
+
+
+def test_version_shown_beside_title():
+    w = make(Settings(), [], [])
+    assert w.version_label.text() == f"v{__version__}"

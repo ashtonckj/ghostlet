@@ -17,6 +17,7 @@ from PySide6.QtWidgets import (
     QWidget,
 )
 
+from ghostlet import __version__
 from ghostlet.settings import LIMITS
 
 # (ghost_scale, label): whole-number multiples of the art keep pixels crisp; "1×" is the default 2.
@@ -35,6 +36,14 @@ class SettingsWindow(QWidget):
         ghost.setPixmap(ghost_pixmap.scaled(ghost_pixmap.size() * 2, Qt.KeepAspectRatio, Qt.FastTransformation))
         title = QLabel("Ghostlet")
         title.setObjectName("title")
+        self.version_label = QLabel(f"v{__version__}")
+        self.version_label.setObjectName("version")
+        header = QWidget()
+        head = QHBoxLayout(header)
+        head.setContentsMargins(0, 0, 0, 0)
+        head.addWidget(title)
+        head.addWidget(self.version_label, 0, Qt.AlignBottom)
+        head.addStretch()
 
         self.enabled = QCheckBox("Show ghosts when I'm idle")
         self.props = QCheckBox("Pumpkins and graves")
@@ -56,7 +65,7 @@ class SettingsWindow(QWidget):
 
         form = QFormLayout(self)
         form.setSizeConstraint(QLayout.SetFixedSize)  # fixed size that follows the style's metrics
-        form.addRow(ghost, title)
+        form.addRow(ghost, header)
         form.addRow(self.enabled)
         form.addRow(self.props)
         form.addRow(self.launch_at_startup)

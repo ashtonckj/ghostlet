@@ -12,6 +12,11 @@
     color: #ff8c1a;
     font-size: 28px;
 }
+#version {
+    color: #c9cfe8;
+    font-size: 12px;
+    padding-bottom: 4px;
+}
 
 QPushButton {
     background: #ff8c1a;

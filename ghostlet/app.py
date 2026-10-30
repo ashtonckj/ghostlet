@@ -118,7 +118,7 @@ class Ghostlet(QObject):
         QMessageBox.about(
             None,
             "About Ghostlet",
-            f"<b>Ghostlet {__version__}</b><br>A tiny ghost that keeps you company while you're away."
+            f"<b>Ghostlet v{__version__}</b><br>A tiny ghost that keeps you company while you're away."
             "<br><br>Runs fully offline. No accounts, analytics or telemetry."
             "<br>Only the time of your last input is read; no keys, screens or files.",
         )
