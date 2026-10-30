@@ -30,13 +30,14 @@ decorations and flees off the screen. 👻🎃
   Pause or Exit.
 - **Featherweight.** Ghostlet checks idle time once a second and only animates while ghosts
   are out.
-- **Private.** Ghostlet is fully offline: no accounts, no telemetry, no keylogging. Details in
-  [SECURITY.md](SECURITY.md).
+- **Private.** No accounts, no telemetry, no keylogging. The only network use is an update check
+  against this repo's GitHub Releases (off with one checkbox). Details in [SECURITY.md](SECURITY.md).
 - **Yours to tweak.** You can change the idle time, ghost count (up to 10), entity size
   (0.5× to 3×, with a live preview), opacity and whether it starts at sign-in. Hit
   **Test spawn** to see it right away.
 - **More company the longer you're away.** Extra ghosts roam the screen, pumpkins pile up,
   and keep an eye out for rare designs.
+- **Updates itself.** When a new release is out you get a popup: **Update** or **Remind me later**.
 - **Bring your own art.** Drop a PNG into a folder and it's in, no code needed. See the
   [art guide](ghostlet/assets/README.md).
 

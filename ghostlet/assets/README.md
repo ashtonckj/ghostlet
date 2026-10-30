@@ -97,8 +97,10 @@ The pixel look of the normal windows lives in `ui/`:
 - `ui/style.qss` sets colours, borders and sizes. It is a Qt style sheet (CSS-like), and
   `{ui}` in it points at this `ui/` folder. Keep corners square for the pixel look.
 - `ui/check.png`, `ui/up.png` and `ui/down.png` are the checkbox tick and the number-box arrows.
-- To use a pixel font, drop a `.ttf` or `.otf` file into `ui/`. It is picked up automatically,
-  and Consolas is used without one. Include the font's license file next to it.
+- The font is whichever `.ttf` or `.otf` file sits in `ui/` (Pixelify Sans is there now). It is
+  picked up automatically, and Consolas is used if there is none. With several font files, the
+  first by name wins, so keep just one. Keep the font's license file (for example `OFL.txt`) next to it.
+  The font must be in this `ui/` folder; one anywhere else, such as the project root, is ignored.
 
 ## After changing files
 

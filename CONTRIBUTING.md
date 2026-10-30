@@ -4,8 +4,9 @@ Thanks for wanting to help the ghosts! Code, artwork, bug reports and ideas are 
 
 ## Ground rules
 
-1. **Privacy is not negotiable.** No network calls, telemetry, analytics, keylogging,
-   screenshots, or file scanning. A PR that adds any of these will be closed.
+1. **Privacy is not negotiable.** No telemetry, analytics, keylogging, screenshots, or file
+   scanning, and no network calls other than the GitHub update check in `ghostlet/update.py`.
+   A PR that adds any of these will be closed.
 2. **Stay light.** Ghostlet sits in the background all day. Do no work while no ghosts
    are visible beyond the 1-second idle check. Animate only while something is on screen.
 3. **Keep it small.** No new dependency without discussing it in an issue first. Prefer the
@@ -60,6 +61,23 @@ python -m PyInstaller ghostlet.spec
 Output: `dist\Ghostlet.exe`. Exit Ghostlet from the tray first: Windows won't let PyInstaller
 overwrite a running exe (`PermissionError: [WinError 5] Access is denied`). If you add files under `ghostlet/assets/`, they are bundled
 automatically.
+
+## Releasing a new version
+
+Every installed Ghostlet checks the latest GitHub Release and offers an update when its tag is higher
+than the version inside the exe. To publish one:
+
+1. Bump `__version__` in `ghostlet/__init__.py` (for example `0.2.0`) and commit.
+2. Exit Ghostlet from the tray, then build with `python -m PyInstaller ghostlet.spec`.
+   Build **after** bumping, or the new exe still thinks it is the old version and keeps offering
+   itself the update.
+3. On GitHub go to **Releases → Draft a new release**, create the tag `v0.2.0` (a `v` plus the same
+   number as `__version__`), attach `dist\Ghostlet.exe`, and click **Publish release**. Drafts and
+   pre-releases are ignored by the update check.
+
+Or from a terminal with the GitHub CLI: `gh release create v0.2.0 dist\Ghostlet.exe --title "Ghostlet v0.2.0" --notes "What changed"`.
+
+If the repository is renamed or moved, change `REPO` in `ghostlet/update.py`.
 
 ## Artwork
 
