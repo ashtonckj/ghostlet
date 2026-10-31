@@ -39,11 +39,11 @@ Each ghost picks a random look.
 
 <div align="center">
 
-| <img src="docs/props/grave_cross.png" alt="grave_cross"> | <img src="docs/props/grave_tall.png" alt="grave_tall"> | <img src="docs/props/grave_wide.png" alt="grave_wide"> | <img src="docs/props/grave_short.png" alt="grave_short"> |
-|:-:|:-:|:-:|:-:|
-| cross grave | tall grave | wide grave | short grave |
-| <img src="docs/props/pumpkin.png" alt="pumpkin"> | <img src="docs/props/pumpkin_1.png" alt="red pumpkin"> | <img src="docs/props/skeleton.png" alt="skeleton"> | <img src="docs/props/spider.png" alt="spider"> |
-| pumpkin | red pumpkin | skeleton | spider |
+| <img src="docs/props/pumpkin.png" alt="pumpkin"> | <img src="docs/props/pumpkin_medium.png" alt="medium pumpkin"> | <img src="docs/props/pumpkin_large.png" alt="large pumpkin"> | <img src="docs/props/pumpkin_red.png" alt="red pumpkin"> | <img src="docs/props/spider.png" alt="spider"> |
+|:-:|:-:|:-:|:-:|:-:|
+| pumpkin | medium pumpkin | large pumpkin | red pumpkin | spider |
+| <img src="docs/props/grave_cross.png" alt="cross grave"> | <img src="docs/props/grave_tall.png" alt="tall grave"> | <img src="docs/props/grave_wide.png" alt="wide grave"> | <img src="docs/props/grave_short.png" alt="short grave"> | <img src="docs/props/skeleton.png" alt="skeleton"> |
+| cross grave | tall grave | wide grave | short grave | skeleton |
 
 The longer you're away, the more pile up. When you're back, the ghosts carry them off.
 
